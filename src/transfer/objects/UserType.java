@@ -1,4 +1,4 @@
-package transfer_objects;
+package transfer.objects;
 
 public enum UserType {
     CUSTOMER,

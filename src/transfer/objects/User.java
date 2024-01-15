@@ -1,19 +1,7 @@
-package transfer_objects;
+package transfer.objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  * Entity representing users. It contains fields such as user ID, username,

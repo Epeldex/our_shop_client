@@ -2,12 +2,6 @@ package logic.interfaces;
 
 import java.time.LocalDate;
 
-import entities.Admin;
-import exceptions.CreateException;
-import exceptions.DeleteException;
-import exceptions.ReadException;
-import exceptions.UpdateException;
-import javax.ejb.Local;
 
 public interface AdminManager {
 
