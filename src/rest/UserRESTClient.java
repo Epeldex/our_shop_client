@@ -8,6 +8,7 @@ package rest;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:UserREST [users]<br>
@@ -32,13 +33,13 @@ public class UserRESTClient {
         webTarget = client.target(BASE_URI).path("users");
     }
 
-    public <T> T findUserByActive(Class<T> responseType, String active) throws ClientErrorException {
+    public <T> T findUserByActive(GenericType<T> responseType, String active) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("active/{0}", new Object[]{active}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T signIn(Object requestEntity, Class<T> responseType) throws ClientErrorException {
+    public <T> T signIn(Object requestEntity, GenericType<T> responseType) throws ClientErrorException {
         return webTarget.path("signin").request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), responseType);
     }
 
@@ -50,13 +51,13 @@ public class UserRESTClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findUserById(Class<T> responseType, String id) throws ClientErrorException {
+    public <T> T findUserById(GenericType<T> responseType, String id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findUserByUsername(Class<T> responseType, String username) throws ClientErrorException {
+    public <T> T findUserByUsername(GenericType<T> responseType, String username) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("username/{0}", new Object[]{username}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -66,7 +67,7 @@ public class UserRESTClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findAllUsers(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAllUsers(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }

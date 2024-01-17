@@ -2,12 +2,8 @@ package logic.interfaces;
 
 import java.util.List;
 
-import entities.User;
-import exceptions.CreateException;
-import exceptions.DeleteException;
-import exceptions.ReadException;
-import exceptions.UpdateException;
-import javax.ejb.Local;
+import transfer_objects.User;
+import exceptions.*;
 
 public interface UserManager {
 
@@ -18,7 +14,7 @@ public interface UserManager {
      * @return The {@link User} object containing user data.
      * @throws ReadException If there is any Exception the process.
      */
-    public User findUserById(Integer id) throws ReadException;
+    public User findUserById(Integer id) throws LogicException;
 
     /**
      * Finds a {@link User} by its username.
@@ -27,7 +23,7 @@ public interface UserManager {
      * @return The {@link User} object containing user data.
      * @throws ReadException If there is any Exception the process.
      */
-    public User findUserByUsername(String username) throws ReadException;
+    public User findUserByUsername(String username) throws LogicException;
 
     /**
      * Finds a {@link User} by its state (active).
@@ -36,7 +32,7 @@ public interface UserManager {
      * @return The {@link User} object containing user data.
      * @throws ReadException If there is any Exception the process.
      */
-    public List<User> findUserByActive(Boolean active) throws ReadException;
+    public List<User> findUserByActive(Boolean active) throws LogicException;
 
     /**
      * Finds a List of {@link User} objects containing data for all users in the
@@ -45,7 +41,7 @@ public interface UserManager {
      * @return A List of {@link User} objects.
      * @throws ReadException If there is any Exception the process.
      */
-    public List<User> findAllUsers() throws ReadException;
+    public List<User> findAllUsers() throws LogicException;
 
     /**
      * Modifies the password of a specific {@link User}.
@@ -55,7 +51,7 @@ public interface UserManager {
      * @param password New password of the {@link User}.
      * @throws UpdateException
      */
-    public void updatePassword(Integer id, String password) throws UpdateException;
+    public void updatePassword(Integer id, String password) throws LogicException;
 
     /**
      * Checks if there's any user with this credentials.
@@ -65,7 +61,7 @@ public interface UserManager {
      * @return The {@link User} object containing the {@link User} data.
      * @throws UpdateException If there is any Exception the process.
      */
-    public User signIn(String username, String password) throws ReadException;
+    public User signIn(String username, String password) throws SignInException;
 
     /**
      * Creates a User and stores it in the underlying application storage.
@@ -73,7 +69,7 @@ public interface UserManager {
      * @param user The {@link User} object containing the user data.
      * @throws CreateException If there is any Exception the process.
      */
-    public void createUser(User user) throws CreateException;
+    public void createUser(User user) throws SignUpException;
 
     /**
      * Updates a user's data in the underlying application storage.
@@ -81,7 +77,7 @@ public interface UserManager {
      * @param user The {@link User} object containing the user data.
      * @throws UpdateException If there is any Exception the process.
      */
-    public void updateUser(User user) throws UpdateException;
+    public void updateUser(User user) throws LogicException;
 
     /**
      * Deletes a user's data in the underlying application storage.
@@ -89,5 +85,5 @@ public interface UserManager {
      * @param user The {@link User} object containing the user data.
      * @throws DeleteException If there is any Exception the process.
      */
-    public void removeUser(Integer id) throws DeleteException;
+    public void removeUser(Integer id) throws LogicException;
 }
