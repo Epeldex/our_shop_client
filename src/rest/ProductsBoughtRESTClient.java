@@ -1,16 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package rest;
 
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.client.Client;
+import java.text.MessageFormat;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import transfer.objects.ProductsBought;
 
 /**
- * Jersey REST client generated for REST resource:ProductsBoughtREST
+ * Jersey REST client generated for REST resource: ProductsBoughtREST
  * [productsBought]<br>
  * USAGE:
  * <pre>
@@ -20,35 +19,67 @@ import javax.ws.rs.client.WebTarget;
  *        client.close();
  * </pre>
  *
- * @author alexa
+ * This class provides a Jersey REST client for interacting with a RESTful web
+ * service that deals with products bought entities. It extends
+ * GenericRESTClient, which is assumed to contain common functionalities for
+ * REST clients.
+ *
+ * The web service is expected to be running on a Glassfish Server, and the
+ * client is designed to perform operations related to products bought entities.
+ *
+ * @author Alex Irusta
  */
-public class ProductsBoughtRESTClient {
+public class ProductsBoughtRESTClient extends GenericRESTClient {
 
-    private WebTarget webTarget;
-    private Client client;
-    private static final String BASE_URI = "http://localhost:8080/Our-shop/webresources";
-
+    /**
+     * Constructs a new ProductsBoughtRESTClient. It creates a RESTful client
+     * and establishes the path of the WebTarget object associated with the
+     * client, pointing to the "productsBought" resource.
+     */
     public ProductsBoughtRESTClient() {
-        client = javax.ws.rs.client.ClientBuilder.newClient();
+        client = ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("productsBought");
     }
 
-    public void purchaseProduct(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    /**
+     * Purchases a product by sending a POST request to the web service with the
+     * provided entity data.
+     *
+     * @param requestEntity The object containing data for the product purchase.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public void purchaseProduct(Object requestEntity) throws WebApplicationException {
+        webTarget.request(MediaType.APPLICATION_XML)
+                .post(Entity.entity(requestEntity, MediaType.APPLICATION_XML), ProductsBought.class);
     }
 
-    public <T> T getProductsBought(Class<T> responseType, String customerId) throws ClientErrorException {
+    /**
+     * Retrieves products bought by a customer based on the customer's ID.
+     *
+     * @param responseType The Class object of the returning instance.
+     * @param customerId The ID of the customer for whom the products were
+     * bought.
+     * @return The object containing the data.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public <T> T getProductsBought(Class<T> responseType, String customerId) throws WebApplicationException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{customerId}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+        resource = resource.path(MessageFormat.format("{0}", new Object[]{customerId}));
+        return resource.request(MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void updateAmount(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    /**
+     * Updates the amount of a product bought by sending a PUT request to the
+     * web service with the updated entity data.
+     *
+     * @param requestEntity The object containing data to be updated.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public void updateAmount(Object requestEntity) throws WebApplicationException {
+        webTarget.request(MediaType.APPLICATION_XML)
+                .put(Entity.entity(requestEntity, MediaType.APPLICATION_XML), ProductsBought.class);
     }
-
-    public void close() {
-        client.close();
-    }
-    
 }

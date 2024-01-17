@@ -1,13 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package rest;
 
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
+import java.text.MessageFormat;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import transfer.objects.Admin;
 
 /**
  * Jersey REST client generated for REST resource:AdminREST [admins]<br>
@@ -19,37 +17,82 @@ import javax.ws.rs.client.WebTarget;
  *        client.close();
  * </pre>
  *
- * @author alexa
+ * This class provides methods to interact with a RESTful web service that
+ * manages admin entities.
+ *
+ * @author Daniel Barrios
  */
-public class AdminRESTClient {
+public class AdminRESTClient extends GenericRESTClient {
 
-    private WebTarget webTarget;
-    private Client client;
-    private static final String BASE_URI = "http://localhost:8080/Our-shop/webresources";
-
+    /**
+     * Constructs an instance of AdminRESTClient. It creates a RESTful web
+     * client and establishes the path of the WebTarget object associated with
+     * the client.
+     */
     public AdminRESTClient() {
-        client = javax.ws.rs.client.ClientBuilder.newClient();
+        // Create RESTful client
+        client = ClientBuilder.newClient();
+        // Establish the path of the WebTarget object associated with the client
         webTarget = client.target(BASE_URI).path("admins");
     }
 
-    public void createAdmin(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    /**
+     * Creates an admin entity by sending a request to the admin RESTful web
+     * service.
+     *
+     * @param requestEntity The object containing data to be created.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public void createAdmin(Object requestEntity) throws WebApplicationException {
+        // Make request to create an admin entity
+        webTarget.request(MediaType.APPLICATION_XML)
+                .post(Entity.entity(requestEntity,
+                        MediaType.APPLICATION_XML), Admin.class);
     }
 
-    public <T> T signIn(Object requestEntity, Class<T> responseType) throws ClientErrorException {
-        return webTarget.path("signin").request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), responseType);
+    /**
+     * Signs in an admin by sending a request to the admin RESTful web service.
+     *
+     * @param requestEntity The object containing data for sign-in.
+     * @param responseType The Class object of the returning instance.
+     * @return The object containing the data.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public <T> T signIn(Object requestEntity, Class<T> responseType) throws WebApplicationException {
+        return webTarget.path("signin")
+                .request(MediaType.APPLICATION_XML)
+                .post(Entity.entity(requestEntity,
+                        MediaType.APPLICATION_XML), responseType);
     }
 
-    public void removeAdmin(String id) throws ClientErrorException {
-        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
+    /**
+     * Removes an admin entity by sending a request to the admin RESTful web
+     * service.
+     *
+     * @param id The id of the admin entity to be removed.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public void removeAdmin(String id) throws WebApplicationException {
+        // Make request to remove an admin entity
+        webTarget.path(MessageFormat.format("{0}", new Object[]{id}))
+                .request().delete(Admin.class);
     }
 
-    public void updateLastAccess(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    /**
+     * Updates the last access time of an admin entity by sending a request to
+     * the admin RESTful web service.
+     *
+     * @param requestEntity The object containing data to be updated.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public void updateAdmin(Object requestEntity) throws WebApplicationException {
+        // Make request to update the last access time of an admin entity
+        webTarget.request(MediaType.APPLICATION_XML)
+                .put(Entity.entity(requestEntity,
+                        MediaType.APPLICATION_XML), Admin.class);
     }
-
-    public void close() {
-        client.close();
-    }
-
 }
