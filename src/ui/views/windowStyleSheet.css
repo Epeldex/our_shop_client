@@ -1,0 +1,121 @@
+.mainAnchorPane {
+    -fx-background-image:url('../../resources/img/background.png');
+    -fx-background-size:cover;
+    /*-fx-font-family: "Roboto Lt", Roboto Lt, regular;*/
+}
+
+.box {
+    -fx-background-color: rgb(255, 255, 255);
+    -fx-position: center;
+    -fx-text-align: center;
+
+    -fx-border-radius: 10 10 10 10;
+    -fx-background-radius: 10 10 10 10;
+}
+
+.text-field {
+    -fx-background-color: #cacaca , white , white;
+    -fx-background-insets: 0 1 -1 1, 0 0 0 0, 0 1 3 0;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: left center;
+    
+    -fx-margin: 20px;
+    -fx-background-size: 25;
+    -fx-size: 5;
+    
+}
+
+.username-text-field {
+    -fx-background-image:url('../../resources/img/user-icon.png');
+}
+
+.password-field {
+    -fx-background-image:url('../../resources/img/password-icon.png');
+    -fx-background-size: 20;
+}
+
+.email-text-field {
+    -fx-background-image:url('../../resources/img/email.png');
+    -fx-background-size: 20;
+}
+
+.personal-information-text-field {
+    -fx-background-image:url('../../resources/img/personal-information.png');
+    -fx-background-size: 18;
+}
+
+.address-text-field {
+    -fx-background-image:url('../../resources/img/home.png');
+    -fx-background-size: 20;
+}
+
+.zip-text-field {
+    -fx-background-image:url('../../resources/img/mailbox.png');
+    -fx-background-size: 20;
+}
+
+.city-text-field {
+    -fx-background-image:url('../../resources/img/city.png');
+    -fx-background-size: 29;
+}
+
+.phone-number-text-field {
+    -fx-background-image:url('../../resources/img/phone.png');
+    -fx-background-size: 17;
+}
+
+
+.gradient-purple-button {
+    -fx-background-color: linear-gradient(to right, #5177de, #c049f7);
+    -fx-font-size: 13;
+    -fx-background-radius: 5em;
+    -fx-cursor: hand;
+}
+
+
+
+.button:hover {
+    -fx-border-color: transparent;
+}
+
+
+
+
+
+
+
+
+.gradient-purple-button:focused {
+    -fx-border-color: purple;
+    -fx-border-radius: 1em;
+    -fx-border-width: 1px;
+}
+/*
+.login-button:hover{
+    /*-fx-background-color: linear-gradient(to left, #5177de, #c049f7);
+    -fx-background-color: linear-gradient(to left, #5177de, #c049f7);
+    -fx-transition: -fx-background-color 0.5s,
+    -fx-scale-x 0.5s ,
+    -fx-scale-y 0.5s ;
+}
+*/
+.transparent-button {
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+
+.transparent-button:focused {
+    -fx-border-color: #c049f7;
+    -fx-border-radius: 5em;
+    -fx-border-width: 1px;
+}
+
+.show-password-button {
+    -fx-size: 100px;
+}
+
+.show-password-button:focused {
+    /*-fx-border-color: none;*/
+    -fx-border-radius: 20em;
+    
+}

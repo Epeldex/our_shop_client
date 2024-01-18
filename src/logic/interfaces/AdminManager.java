@@ -2,12 +2,8 @@ package logic.interfaces;
 
 import java.time.LocalDate;
 
-import entities.Admin;
-import exceptions.CreateException;
-import exceptions.DeleteException;
-import exceptions.ReadException;
-import exceptions.UpdateException;
-import javax.ejb.Local;
+import transfer_objects.Admin;
+import exceptions.*;
 
 public interface AdminManager {
 
@@ -19,7 +15,7 @@ public interface AdminManager {
      * @param date New date of the {@link Admin}.
      * @throws UpdateException
      */
-    public void updateLastAccess(Integer id, LocalDate date) throws UpdateException;
+    public void updateLastAccess(Integer id, LocalDate date) throws LogicException;
 
     /**
      * Checks if there's any Admin with this credentials.
@@ -29,7 +25,7 @@ public interface AdminManager {
      * @return The {@link Admin} object containing the {@link Admin} data.
      * @throws UpdateException If there is any Exception the process.
      */
-    public Admin signIn(String username, String password) throws ReadException;
+    public Admin signIn(String username, String password) throws SignInException;
 
     /**
      * Creates an Admin and stores it in the underlying application storage.
@@ -37,7 +33,7 @@ public interface AdminManager {
      * @param admin The {@link Admin} object containing the admin data.
      * @throws CreateException If there is any Exception the process.
      */
-    public void createAdmin(Admin admin) throws CreateException;
+    public void createAdmin(Admin admin) throws SignUpException;
 
     /**
      * Updates an admin's data in the underlying application storage.
@@ -45,7 +41,7 @@ public interface AdminManager {
      * @param admin The {@link Admin} object containing the admin data.
      * @throws UpdateException If there is any Exception the process.
      */
-    public void updateAdmin(Admin admin) throws UpdateException;
+    public void updateAdmin(Admin admin) throws LogicException;
 
     /**
      * Deletes an Admin's data in the underlying application storage.
@@ -53,5 +49,5 @@ public interface AdminManager {
      * @param admin The {@link Admin} object containing the Admadminin data.
      * @throws DeleteException If there is any Exception the process.
      */
-    public void removeAdmin(Integer id) throws DeleteException;
+    public void removeAdmin(Integer id) throws LogicException;
 }
