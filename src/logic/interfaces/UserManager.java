@@ -1,9 +1,17 @@
 package logic.interfaces;
 
 import java.util.List;
+import logic.exceptions.LogicException;
+import transfer.objects.User;
 
-import transfer_objects.User;
 import exceptions.*;
+
+/**
+ * Interface for managing {@link User} operations. This interface defines
+ * methods for finding users by ID or username, retrieving active users,
+ * retrieving a list of all users, updating passwords, signing in, creating,
+ * updating, and removing users in the underlying application storage.
+ */
 
 public interface UserManager {
 
@@ -12,16 +20,16 @@ public interface UserManager {
      *
      * @param id The id of the user to be found.
      * @return The {@link User} object containing user data.
-     * @throws ReadException If there is any Exception the process.
+     * @throws LogicException If there is any LogicException during the process.
      */
     public User findUserById(Integer id) throws LogicException;
 
     /**
      * Finds a {@link User} by its username.
      *
-     * @param username
+     * @param username The username of the user to be found.
      * @return The {@link User} object containing user data.
-     * @throws ReadException If there is any Exception the process.
+     * @throws LogicException If there is any LogicException during the process.
      */
     public User findUserByUsername(String username) throws LogicException;
 
@@ -30,7 +38,7 @@ public interface UserManager {
      *
      * @param active The state of the user as a boolean.
      * @return The {@link User} object containing user data.
-     * @throws ReadException If there is any Exception the process.
+     * @throws LogicException If there is any LogicException during the process.
      */
     public List<User> findUserByActive(Boolean active) throws LogicException;
 
@@ -39,51 +47,49 @@ public interface UserManager {
      * application data storage.
      *
      * @return A List of {@link User} objects.
-     * @throws ReadException If there is any Exception the process.
+     * @throws LogicException If there is any LogicException during the process.
      */
     public List<User> findAllUsers() throws LogicException;
 
     /**
      * Modifies the password of a specific {@link User}.
      *
-     * @param id Id of the {@link User} whose password is to be changed.
-     * @return A List of {@link User} objects.
-     * @param password New password of the {@link User}.
-     * @throws UpdateException
+     * @param user {@link User} object with the updatedPassword.
+     * @throws LogicException If there is any LogicException during the process.
      */
-    public void updatePassword(Integer id, String password) throws LogicException;
+
+    public void updatePassword(User user) throws LogicException;
 
     /**
-     * Checks if there's any user with this credentials.
+     * Checks if there's any user with these credentials.
      *
-     * @param username The {@link User} object's username.
-     * @param password The {@link User} object's password
-     * @return The {@link User} object containing the {@link User} data.
-     * @throws UpdateException If there is any Exception the process.
+     * @param user The {@link User} with the signIn information.
+     * @throws LogicException If there is any LogicException during the process.
+     * @return the transfer.objects.User
      */
-    public User signIn(String username, String password) throws SignInException;
+    public User signIn(User user) throws LogicException;
 
     /**
      * Creates a User and stores it in the underlying application storage.
      *
      * @param user The {@link User} object containing the user data.
-     * @throws CreateException If there is any Exception the process.
+     * @throws LogicException If there is any LogicException during the process.
      */
-    public void createUser(User user) throws SignUpException;
+    public void createUser(User user) throws LogicException;
 
     /**
      * Updates a user's data in the underlying application storage.
      *
      * @param user The {@link User} object containing the user data.
-     * @throws UpdateException If there is any Exception the process.
+     * @throws LogicException If there is any LogicException during the process.
      */
     public void updateUser(User user) throws LogicException;
 
     /**
      * Deletes a user's data in the underlying application storage.
      *
-     * @param user The {@link User} object containing the user data.
-     * @throws DeleteException If there is any Exception the process.
+     * @param id The ID of the {@link User} object to be removed.
+     * @throws LogicException If there is any LogicException during the process.
      */
     public void removeUser(Integer id) throws LogicException;
 }

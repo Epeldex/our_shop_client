@@ -8,8 +8,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import ui.controller.LoginController;
-import ui.controller.SignUpController;
 
 public class App extends Application {
 
@@ -25,11 +23,11 @@ public class App extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/login_view.fxml"));
             Parent root = (Parent) loader.load();
-            // Obtain the Sign In window controller
-            LoginController controller = LoginController.class
-                    .cast(loader.getController());
-            controller.setStage(stage);
-            controller.initStage(root);
+//            Obtain the Sign In window controller
+//            LoginController controller = LoginController.class
+//                    .cast(loader.getController());
+//            controller.setStage(stage);
+//            controller.initStage(root);
         } catch (IOException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }

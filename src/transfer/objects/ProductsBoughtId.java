@@ -1,4 +1,4 @@
-package transfer_objects;
+package transfer.objects;
 
 import java.io.Serializable;
 import java.util.Objects;
