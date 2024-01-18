@@ -1,5 +1,12 @@
 package ui.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Properties;
 
@@ -9,6 +16,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.validation.Path;
+import javax.validation.constraints.Email;
 
 import animatefx.animation.Jello;
 import animatefx.animation.Swing;
@@ -47,14 +56,12 @@ public class PasswordRecoveryController extends UsernameManagingGenericControlle
         box.setVisible(false);
         LOGGER.info("Initialazing " + " window.");
         Scene scene = new Scene(root);
-        //stage.initModality(Modality.WINDOW_MODAL);
+        // stage.initModality(Modality.WINDOW_MODAL);
         stage.setResizable(false);
         stage.setMaximized(false);
         stage.getIcons().add(logo);
         stage.setTitle("Recovery Window");
 
-
-        
         emailTextField.setDisable(false);
         recoveryButton.setDisable(false);
         loginButton.setDisable(false);
@@ -66,10 +73,9 @@ public class PasswordRecoveryController extends UsernameManagingGenericControlle
         recoveryButton.setOnAction(this::handleRecovery);
         loginButton.setOnAction(this::handleLogin);
 
-
         // Button hovering animations
         {
-            recoveryButton.hoverProperty().addListener((observable, oldValue, newValue) -> { 
+            recoveryButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue)
                     new Expand(recoveryButton).play();
                 else
@@ -77,20 +83,17 @@ public class PasswordRecoveryController extends UsernameManagingGenericControlle
             });
         }
 
-
         stage.setScene(scene);
-    
-        
-        
+
         stage.show();
         // Logger update.
         LOGGER.info("Window opened.");
 
-        slideBoxIn(box, 1);    
+        slideBoxIn(box, 1);
     }
 
     public void handleEmail(ObservableValue observable,
-        String oldValue, String newValue) {
+            String oldValue, String newValue) {
 
     }
 
@@ -100,23 +103,25 @@ public class PasswordRecoveryController extends UsernameManagingGenericControlle
     }
 
     private void sendEmail(String givenEmail) {
-        String emailToSend = "HOLAAAAAAAA!!!!!!!";
+        String emailToSend = new ReadHTMLFile().getMail();
 
-        givenEmail = "danielbarrios2002@gmail.com";
+        
+
+        //String emailToSend = "html.toString()";
         // port and host configuration
         final String ZOHO_HOST = "smtp.zoho.eu";
         final String TLS_PORT = "897";
         // senders credentials
         final String SENDER_USERNAME = "bmoncalvillo@zohomail.eu";
         final String SENDER_PASSWORD = "Du75zJLqbaZ1";
-        
+
         // protocol properties
         Properties props = System.getProperties();
-        props.setProperty("mail.smtps.host", ZOHO_HOST); // change to GMAIL_HOST for gmail                                                         // for gmail
+        props.setProperty("mail.smtps.host", ZOHO_HOST); // change to GMAIL_HOST for gmail // for gmail
         props.setProperty("mail.smtp.port", TLS_PORT);
         props.setProperty("mail.smtp.starttls.enable", "true");
         props.setProperty("mail.smtps.auth", "true");
-        
+
         // close connection upon quit being sent
         props.put("mail.smtps.quitwait", "false");
 
@@ -135,11 +140,10 @@ public class PasswordRecoveryController extends UsernameManagingGenericControlle
 
             // send the mail
             Transport transport = session.getTransport("smtps");
-                // send the mail
-                transport.connect(ZOHO_HOST, SENDER_USERNAME, SENDER_PASSWORD);
-                transport.sendMessage(msg, msg.getAllRecipients());
-            
-            
+            // send the mail
+            transport.connect(ZOHO_HOST, SENDER_USERNAME, SENDER_PASSWORD);
+            transport.sendMessage(msg, msg.getAllRecipients());
+
         } catch (MessagingException e) {
         }
     }
@@ -148,25 +152,27 @@ public class PasswordRecoveryController extends UsernameManagingGenericControlle
         new Jello(loginButton).play();
         box.requestFocus();
         /**
-         * This little code here animates the fade out of the window before launching the next one.
+         * This little code here animates the fade out of the window before launching
+         * the next one.
          */
         fadeTransition(box, 1, 0)
-        .setOnFinished((ActionEvent) -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/login_view.fxml"));
-                Parent root = (Parent) loader.load();
-                // Obtain the Sign In window controller
-                LoginController controller = LoginController.class
-                    .cast(loader.getController());
-                controller.setStage(stage);
-                controller.initStage(root);
-    
-            } catch (Exception ex) {
-                /*
-                Logger.getLogger(App.class
-                        .getName()).log(Level.SEVERE, null, ex);
-                 */
-            }
-        });
+                .setOnFinished((ActionEvent) -> {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(
+                                getClass().getClassLoader().getResource("ui/views/login_view.fxml"));
+                        Parent root = (Parent) loader.load();
+                        // Obtain the Sign In window controller
+                        LoginController controller = LoginController.class
+                                .cast(loader.getController());
+                        controller.setStage(stage);
+                        controller.initStage(root);
+
+                    } catch (Exception ex) {
+                        /*
+                         * Logger.getLogger(App.class
+                         * .getName()).log(Level.SEVERE, null, ex);
+                         */
+                    }
+                });
     }
 }
