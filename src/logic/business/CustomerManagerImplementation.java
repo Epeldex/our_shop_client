@@ -1,7 +1,10 @@
 package logic.business;
 
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import logic.encryption.EncriptionManager;
+import logic.encryption.EncriptionManagerFactory;
 import logic.exceptions.LogicException;
 import logic.interfaces.CustomerManager;
 import rest.CustomerRESTClient;
@@ -24,6 +27,7 @@ public class CustomerManagerImplementation implements CustomerManager {
     // REST customer web client
     private CustomerRESTClient webClient;
     private static final Logger LOGGER = Logger.getLogger("Customer Manager");
+    private static EncriptionManager em;
 
     /**
      * Create a CustomerManagerImplementation object. It constructs a web client
@@ -32,6 +36,7 @@ public class CustomerManagerImplementation implements CustomerManager {
      */
     public CustomerManagerImplementation() {
         webClient = new CustomerRESTClient();
+        em = EncriptionManagerFactory.getInstance();
     }
 
     /**
@@ -46,6 +51,7 @@ public class CustomerManagerImplementation implements CustomerManager {
     public void updateCustomer(Customer customer) throws LogicException {
         try {
             LOGGER.info("CustomerManager: Updating customer with ID " + customer.getId());
+            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(customer.getPassword()))));
             webClient.updatePersonalInfo(customer);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception updating customer, {0}", ex.getMessage());
@@ -84,6 +90,7 @@ public class CustomerManagerImplementation implements CustomerManager {
     public void insertCustomer(Customer customer) throws LogicException {
         try {
             LOGGER.info("CustomerManager: Inserting new customer");
+            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(customer.getPassword()))));
             webClient.insertCustomer(customer);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception inserting customer, {0}", ex.getMessage());
@@ -105,7 +112,9 @@ public class CustomerManagerImplementation implements CustomerManager {
     public Customer getCustomer(Integer userId) throws LogicException {
         try {
             LOGGER.info("CustomerManager: Retrieving customer with ID " + userId);
-            return webClient.getCustomer(Customer.class, userId.toString());
+            Customer customer = webClient.getCustomer(Customer.class, userId.toString());
+            customer.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(customer.getPassword())));
+            return customer;
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception retrieving customer, {0}", ex.getMessage());
             throw new LogicException("Error retrieving customer:\n" + ex.getMessage());
@@ -124,6 +133,7 @@ public class CustomerManagerImplementation implements CustomerManager {
     public void updateBalance(Customer customer) throws LogicException {
         try {
             LOGGER.info("CustomerManager: Updating balance for customer with ID " + customer.getId());
+            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(customer.getPassword()))));
             webClient.updatePersonalInfo(customer);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception updating balance, {0}", ex.getMessage());

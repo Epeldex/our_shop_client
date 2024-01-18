@@ -79,7 +79,7 @@ public class EncriptionManagerImplementation implements EncriptionManager {
             return cipher.doFinal(Base64.getDecoder().decode(message));
 
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error decrypting message", e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error decrypting message", e);
             throw new InternalServerErrorException(e);
         }
 

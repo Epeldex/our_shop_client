@@ -1,7 +1,10 @@
 package logic.business;
 
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import logic.encryption.EncriptionManager;
+import logic.encryption.EncriptionManagerFactory;
 import logic.exceptions.LogicException;
 import logic.interfaces.AdminManager;
 import rest.AdminRESTClient;
@@ -23,6 +26,7 @@ public class AdminManagerImplementation implements AdminManager {
     // REST admin web client
     private AdminRESTClient webClient;
     private static final Logger LOGGER = Logger.getLogger("Admin Manager");
+    private static EncriptionManager em;
 
     /**
      * Create an AdminManagerImplementation object. It constructs a web client
@@ -31,6 +35,7 @@ public class AdminManagerImplementation implements AdminManager {
      */
     public AdminManagerImplementation() {
         webClient = new AdminRESTClient();
+        em = EncriptionManagerFactory.getInstance();
     }
 
     /**
@@ -46,7 +51,10 @@ public class AdminManagerImplementation implements AdminManager {
     public Admin signIn(Admin admin) throws LogicException {
         try {
             LOGGER.info("AdminManager: Signing in with username " + admin);
-            return webClient.signIn(admin, Admin.class);
+            admin.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(admin.getPassword()))));
+            Admin receivedAdmin = webClient.signIn(admin, Admin.class);
+            receivedAdmin.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(receivedAdmin.getPassword())));
+            return receivedAdmin;
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "AdminManager: Exception during sign-in, {0}", ex.getMessage());
             throw new LogicException("Error during sign-in:\n" + ex.getMessage());
@@ -65,6 +73,7 @@ public class AdminManagerImplementation implements AdminManager {
     public void createAdmin(Admin admin) throws LogicException {
         try {
             LOGGER.info("AdminManager: Creating new admin");
+            admin.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(admin.getPassword())));
             webClient.createAdmin(admin);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "AdminManager: Exception creating admin, {0}", ex.getMessage());
@@ -84,6 +93,7 @@ public class AdminManagerImplementation implements AdminManager {
     public void updateAdmin(Admin admin) throws LogicException {
         try {
             LOGGER.info("AdminManager: Updating admin with ID " + admin.getId());
+            admin.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(admin.getPassword()))));
             webClient.updateAdmin(admin);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "AdminManager: Exception updating admin, {0}", ex.getMessage());

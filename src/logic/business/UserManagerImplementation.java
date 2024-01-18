@@ -1,8 +1,12 @@
 package logic.business;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.core.GenericType;
+import logic.encryption.EncriptionManager;
+import logic.encryption.EncriptionManagerFactory;
 import logic.exceptions.LogicException;
 import logic.interfaces.UserManager;
 import rest.UserRESTClient;
@@ -25,6 +29,7 @@ public class UserManagerImplementation implements UserManager {
     // REST user web client
     private UserRESTClient webClient;
     private static final Logger LOGGER = Logger.getLogger("User Manager");
+    private static EncriptionManager em;
 
     /**
      * Create a UserManagerImplementation object. It constructs a web client for
@@ -33,6 +38,7 @@ public class UserManagerImplementation implements UserManager {
      */
     public UserManagerImplementation() {
         webClient = new UserRESTClient();
+        em = EncriptionManagerFactory.getInstance();
     }
 
     /**
@@ -48,7 +54,9 @@ public class UserManagerImplementation implements UserManager {
     public User findUserById(Integer id) throws LogicException {
         try {
             LOGGER.info("UserManager: Finding user by ID " + id);
-            return webClient.findUserById(User.class, id.toString());
+            User user = webClient.findUserById(User.class, id.toString());
+            user.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(user.getPassword())));
+            return user;
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception finding user by ID, {0}", ex.getMessage());
             throw new LogicException("Error finding user by ID:\n" + ex.getMessage());
@@ -69,7 +77,9 @@ public class UserManagerImplementation implements UserManager {
     public User findUserByUsername(String username) throws LogicException {
         try {
             LOGGER.info("UserManager: Finding user by username " + username);
-            return webClient.findUserByUsername(User.class, username);
+            User user = webClient.findUserByUsername(User.class, username);
+            user.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(user.getPassword())));
+            return user;
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception finding user by username, {0}", ex.getMessage());
             throw new LogicException("Error finding user by username:\n" + ex.getMessage());
@@ -90,7 +100,12 @@ public class UserManagerImplementation implements UserManager {
     public List<User> findUserByActive(Boolean active) throws LogicException {
         try {
             LOGGER.info("UserManager: Finding users by active status " + active);
-            return webClient.findUserByActive(List.class, active.toString());
+            List<User> userList = webClient.findUserByActive(new GenericType<List<User>>() {
+            }, active.toString());
+            for (User user : userList) {
+                user.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(user.getPassword())));
+            }
+            return userList;
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception finding users by active status, {0}", ex.getMessage());
             throw new LogicException("Error finding users by active status:\n" + ex.getMessage());
@@ -108,7 +123,8 @@ public class UserManagerImplementation implements UserManager {
     public List<User> findAllUsers() throws LogicException {
         try {
             LOGGER.info("UserManager: Finding all users");
-            return webClient.findAllUsers(List.class);
+            return webClient.findAllUsers(new GenericType<List<User>>() {
+            });
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception finding all users, {0}", ex.getMessage());
             throw new LogicException("Error finding all users:\n" + ex.getMessage());

@@ -3,6 +3,7 @@ package logic.business;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.core.GenericType;
 import logic.exceptions.LogicException;
 import logic.interfaces.ProductsBoughtManager;
 import rest.ProductsBoughtRESTClient;
@@ -90,7 +91,8 @@ public class ProductsBoughtManagerImplementation implements ProductsBoughtManage
     public List<ProductsBought> getProductsBought(Integer customerId) throws LogicException {
         try {
             LOGGER.info("ProductsBoughtManager: Retrieving products bought by customer with ID " + customerId);
-            return webClient.getProductsBought(List.class, customerId.toString());
+            return webClient.getProductsBought(new GenericType<List<ProductsBought>>() {
+            }, customerId.toString());
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "ProductsBoughtManager: Exception retrieving products bought, {0}", ex.getMessage());
             throw new LogicException("Error retrieving products bought:\n" + ex.getMessage());

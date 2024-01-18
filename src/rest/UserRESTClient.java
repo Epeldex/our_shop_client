@@ -5,6 +5,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import transfer.objects.User;
 
@@ -94,7 +95,7 @@ public class UserRESTClient extends GenericRESTClient {
      * @throws WebApplicationException If there is an error while processing.
      * The error is wrapped in an HTTP error response.
      */
-    public <T> T findAllUsers(Class<T> responseType) throws WebApplicationException {
+    public <T> T findAllUsers(GenericType<T> responseType) throws WebApplicationException {
         WebTarget resource = webTarget;
         return resource.request(MediaType.APPLICATION_XML).get(responseType);
     }
@@ -163,9 +164,10 @@ public class UserRESTClient extends GenericRESTClient {
      * @throws WebApplicationException If there is an error while processing.
      * The error is wrapped in an HTTP error response.
      */
-    public <T> T findUserByActive(Class<T> responseType, String active) throws WebApplicationException {
+    public <T> T findUserByActive(GenericType<T> responseType, String active) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(MessageFormat.format("active/{0}", new Object[]{active}));
         return resource.request(MediaType.APPLICATION_XML).get(responseType);
+
     }
 }

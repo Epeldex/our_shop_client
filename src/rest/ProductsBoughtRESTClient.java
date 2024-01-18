@@ -5,6 +5,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import transfer.objects.ProductsBought;
 
@@ -64,7 +65,7 @@ public class ProductsBoughtRESTClient extends GenericRESTClient {
      * @throws WebApplicationException If there is an error while processing.
      * The error is wrapped in an HTTP error response.
      */
-    public <T> T getProductsBought(Class<T> responseType, String customerId) throws WebApplicationException {
+    public <T> T getProductsBought(GenericType<T> responseType, String customerId) throws WebApplicationException {
         WebTarget resource = webTarget;
         resource = resource.path(MessageFormat.format("{0}", new Object[]{customerId}));
         return resource.request(MediaType.APPLICATION_XML).get(responseType);
