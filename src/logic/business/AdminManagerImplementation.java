@@ -1,5 +1,7 @@
 package logic.business;
 
+import exceptions.SignInException;
+import exceptions.SignUpException;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +50,7 @@ public class AdminManagerImplementation implements AdminManager {
      * operation.
      */
     @Override
-    public Admin signIn(Admin admin) throws LogicException {
+    public Admin signIn(Admin admin) throws SignInException {
         try {
             LOGGER.info("AdminManager: Signing in with username " + admin);
             admin.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(admin.getPassword()))));
@@ -57,7 +59,7 @@ public class AdminManagerImplementation implements AdminManager {
             return receivedAdmin;
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "AdminManager: Exception during sign-in, {0}", ex.getMessage());
-            throw new LogicException("Error during sign-in:\n" + ex.getMessage());
+            throw new SignInException("Error during sign-in:\n" + ex.getMessage());
         }
     }
 
@@ -70,14 +72,14 @@ public class AdminManagerImplementation implements AdminManager {
      * operation.
      */
     @Override
-    public void createAdmin(Admin admin) throws LogicException {
+    public void createAdmin(Admin admin) throws SignUpException {
         try {
             LOGGER.info("AdminManager: Creating new admin");
             admin.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(admin.getPassword())));
             webClient.createAdmin(admin);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "AdminManager: Exception creating admin, {0}", ex.getMessage());
-            throw new LogicException("Error creating admin:\n" + ex.getMessage());
+            throw new SignUpException("Error creating admin:\n" + ex.getMessage());
         }
     }
 

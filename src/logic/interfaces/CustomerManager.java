@@ -2,7 +2,6 @@ package logic.interfaces;
 
 import logic.exceptions.LogicException;
 import transfer.objects.Customer;
-import transfer.objects.User;
 
 /**
  * Interface for communication between the REST client layer and the logic

@@ -4,12 +4,15 @@ import java.util.List;
 import logic.exceptions.LogicException;
 import transfer.objects.User;
 
+import exceptions.*;
+
 /**
  * Interface for managing {@link User} operations. This interface defines
  * methods for finding users by ID or username, retrieving active users,
  * retrieving a list of all users, updating passwords, signing in, creating,
  * updating, and removing users in the underlying application storage.
  */
+
 public interface UserManager {
 
     /**
@@ -54,6 +57,7 @@ public interface UserManager {
      * @param user {@link User} object with the updatedPassword.
      * @throws LogicException If there is any LogicException during the process.
      */
+
     public void updatePassword(User user) throws LogicException;
 
     /**

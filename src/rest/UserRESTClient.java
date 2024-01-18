@@ -49,6 +49,7 @@ public class UserRESTClient extends GenericRESTClient {
      * The error is wrapped in an HTTP error response.
      */
     public String requestSymmetricKey() throws WebApplicationException {
+
         WebTarget resource = webTarget;
         resource = resource.path("key");
         return resource.request(MediaType.APPLICATION_XML).get(String.class);
@@ -65,6 +66,7 @@ public class UserRESTClient extends GenericRESTClient {
      * The error is wrapped in an HTTP error response.
      */
     public <T> T findUserById(Class<T> responseType, String id) throws WebApplicationException {
+
         WebTarget resource = webTarget;
         resource = resource.path(MessageFormat.format("{0}", new Object[]{id}));
         return resource.request(MediaType.APPLICATION_XML).get(responseType);
@@ -81,11 +83,12 @@ public class UserRESTClient extends GenericRESTClient {
      * The error is wrapped in an HTTP error response.
      */
     public <T> T findUserByUsername(Class<T> responseType, String username) throws WebApplicationException {
+
         WebTarget resource = webTarget;
         resource = resource.path(MessageFormat.format("username/{0}", new Object[]{username}));
         return resource.request(MediaType.APPLICATION_XML).get(responseType);
     }
-
+    
     /**
      * Retrieves a list of all user entities' XML representation from the web
      * service.

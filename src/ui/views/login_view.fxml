@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox prefHeight="566.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.LoginController">
+  <children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="390.0" prefWidth="640.0" styleClass="mainAnchorPane" stylesheets="@windowStyleSheet.css" VBox.vgrow="ALWAYS">
+         <children>
+            <AnchorPane fx:id="box" layoutX="353.0" layoutY="46.0" prefHeight="475.0" prefWidth="318.0" styleClass="box" stylesheets="@login.css">
+               <children>
+                  <Text fx:id="usernameText" fill="#535353" layoutX="32.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" wrappingWidth="68.53668212890625">
+                     <font>
+                        <Font size="10.0" />
+                     </font></Text>
+                  <Text fx:id="passwordText" fill="#5e5e5e" layoutX="32.0" layoutY="182.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" wrappingWidth="68.53668212890625">
+                     <font>
+                        <Font size="10.0" />
+                     </font></Text>
+                  <Text fx:id="loginText" layoutX="124.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
+                     <font>
+                        <Font name="Roboto Black" size="28.0" />
+                     </font></Text>
+                  <TextField fx:id="usernameTextField" alignment="CENTER" layoutX="32.0" layoutY="123.0" prefHeight="33.0" prefWidth="254.0" promptText="Type your username" styleClass="username-text-field">
+                     <opaqueInsets>
+                        <Insets top="1.0" />
+                     </opaqueInsets></TextField>
+                  <PasswordField fx:id="passwordField" alignment="CENTER" layoutX="32.0" layoutY="192.0" prefHeight="33.0" prefWidth="254.0" promptText="Type your password" styleClass="password-field" />
+                  <TextField fx:id="passwordTextField" alignment="CENTER" layoutX="32.0" layoutY="192.0" prefHeight="33.0" prefWidth="254.0" promptText="Type your password" styleClass="password-field">
+                     <opaqueInsets>
+                        <Insets top="1.0" />
+                     </opaqueInsets>
+                  </TextField>
+                  <AnchorPane layoutX="108.0" layoutY="357.0" prefHeight="58.0" prefWidth="102.0" styleClass="social-media-minibox">
+                     <children>
+                        <ImageView fitHeight="42.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../resources/img/twitter.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="42.0" fitWidth="42.0" layoutX="58.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../resources/img/instagram.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+                  <Text fill="#686868" layoutX="86.0" layoutY="424.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Or Sign Up" textAlignment="CENTER" wrappingWidth="146.8433837890625">
+                     <font>
+                        <Font name="Roboto Bold" size="9.0" />
+                     </font>
+                  </Text>
+                  <ImageView fx:id="usernameErrorImage" fitHeight="42.0" fitWidth="19.0" layoutX="262.0" layoutY="130.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../resources/img/error-mark.png" />
+                     </image>
+                  </ImageView>
+                  <Text fx:id="usernameErrorText" fill="#ff6161" layoutX="126.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username cannot have spaces" textAlignment="RIGHT" wrappingWidth="158.93670654296875">
+                     <font>
+                        <Font name="Roboto Medium" size="10.0" />
+                     </font>
+                  </Text>
+                  <Button fx:id="showPasswordButton" layoutX="249.0" layoutY="191.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="23.0" stylesheets="@login.css">
+                     <graphic>
+                        <ImageView fx:id="showPasswordImage" fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../resources/img/seen.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <styleClass>
+                        <String fx:value="transparent-button" />
+                        <String fx:value="show-password-button" />
+                     </styleClass>
+                  </Button>
+                  <Button fx:id="forgotPasswordButton" layoutX="195.0" layoutY="249.0" mnemonicParsing="false" styleClass="transparent-button" text="Forgot password?" textFill="#5e5e5e">
+                     <font>
+                        <Font name="Roboto Black" size="10.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="loginButton" layoutX="47.0" layoutY="293.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="223.0" styleClass="gradient-purple-button" text="LOGIN" textFill="WHITE">
+                     <font>
+                        <Font name="Roboto Medium" size="3.0" />
+                     </font></Button>
+                  <Button fx:id="signUpButton" layoutX="128.0" layoutY="435.0" mnemonicParsing="false" styleClass="transparent-button" text="SIGN UP" textFill="#5e5e5e" />
+                  <Text fx:id="passwordErrorText" fill="#ff6161" layoutX="66.0" layoutY="242.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password is too short" wrappingWidth="210.93670654296875">
+                     <font>
+                        <Font name="Roboto Medium" size="10.0" />
+                     </font>
+                  </Text>
+                  <ImageView fx:id="passwordErrorImage" fitHeight="20.0" fitWidth="19.0" layoutX="32.0" layoutY="230.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../resources/img/error-mark.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+         </children>
+    </AnchorPane>
+  </children>
+</VBox>
