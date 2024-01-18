@@ -5,13 +5,17 @@
  */
 package rest;
 
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.client.Client;
+import java.text.MessageFormat;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import transfer.objects.Tag;
 
 /**
- * Jersey REST client generated for REST resource:TagREST [tags]<br>
+ * Jersey REST client generated for REST resource: TagREST [tags]<br>
  * USAGE:
  * <pre>
  *        TagRESTClient client = new TagRESTClient();
@@ -20,44 +24,94 @@ import javax.ws.rs.core.GenericType;
  *        client.close();
  * </pre>
  *
+ * This class provides a Jersey REST client for interacting with a RESTful web
+ * service that deals with tag entities. It extends GenericRESTClient, which is
+ * assumed to contain common functionalities for REST clients.
+ *
+ * The web service is expected to be running on a Glassfish Server, and the
+ * client is designed to perform CRUD (Create, Read, Update, Delete) operations
+ * on tag entities.
+ *
  * @author alexa
  */
-public class TagRESTClient {
+public class TagRESTClient extends GenericRESTClient {
 
-    private WebTarget webTarget;
-    private Client client;
-    private static final String BASE_URI = "http://localhost:8080/Our-shop/webresources";
-
+    /**
+     * Constructs a new TagRESTClient. It creates a RESTful client and
+     * establishes the path of the WebTarget object associated with the client,
+     * pointing to the "tags" resource.
+     */
     public TagRESTClient() {
-        client = javax.ws.rs.client.ClientBuilder.newClient();
+        client = ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("tags");
     }
 
-    public <T> T find(Class<T> responseType, String id) throws ClientErrorException {
+    /**
+     * Retrieves a tag entity's XML representation from the web service based on
+     * the tag's ID.
+     *
+     * @param responseType The Class object of the returning instance.
+     * @param id The ID of the tag entity to be retrieved.
+     * @return The object containing the data.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public <T> T find(Class<T> responseType, String id) throws WebApplicationException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+        resource = resource.path(MessageFormat.format("{0}", new Object[]{id}));
+        return resource.request(MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void create(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    /**
+     * Creates a new tag entity by sending a POST request to the web service
+     * with the provided entity data.
+     *
+     * @param requestEntity The object containing data to be created.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public void create(Object requestEntity) throws WebApplicationException {
+        webTarget.request(MediaType.APPLICATION_XML)
+                .post(Entity.entity(requestEntity, MediaType.APPLICATION_XML), Tag.class);
     }
 
-    public void update(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    /**
+     * Updates an existing tag entity by sending a PUT request to the web
+     * service with the updated entity data.
+     *
+     * @param requestEntity The object containing data to be updated.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public void update(Object requestEntity) throws WebApplicationException {
+        webTarget.request(MediaType.APPLICATION_XML)
+                .put(Entity.entity(requestEntity, MediaType.APPLICATION_XML), Tag.class);
     }
 
-    public void delete(String id) throws ClientErrorException {
-        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
+    /**
+     * Deletes a tag entity based on its ID by sending a DELETE request to the
+     * web service.
+     *
+     * @param id The ID of the tag entity to be deleted.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public void delete(String id) throws WebApplicationException {
+        webTarget.path(MessageFormat.format("{0}", new Object[]{id}))
+                .request().delete(Tag.class);
     }
 
-    public <T> T findAll(GenericType<T> responseType) throws ClientErrorException {
+    /**
+     * Retrieves a list of tag entities' XML representation from the web
+     * service.
+     *
+     * @param responseType The GenericType object of the returning instance.
+     * @return A generic type, normally a list, containing the data.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public <T> T findAll(GenericType<T> responseType) throws WebApplicationException {
         WebTarget resource = webTarget;
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+        return resource.request(MediaType.APPLICATION_XML).get(responseType);
     }
-
-    public void close() {
-        client.close();
-    }
-    
 }

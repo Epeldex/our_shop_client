@@ -1,51 +1,40 @@
 package logic.interfaces;
 
-import java.time.LocalDate;
-
+import logic.exceptions.LogicException;
+import transfer.objects.Admin;
 
 public interface AdminManager {
 
     /**
-     * Modifies the last access of a specific {@link Admin}.
+     * Checks if there is any Admin with the provided credentials.
      *
-     * @param id Id of the {@link Admin} whose password is to be changed.
-     * @return A List of {@link Admin} objects.
-     * @param date New date of the {@link Admin}.
-     * @throws UpdateException
+     * @param admin The {@link Admin} object.
+     * @throws LogicException If there is any logic exception during the sign-in process.
+     * @return the admin
      */
-    public void updateLastAccess(Integer id, LocalDate date) throws UpdateException;
-
-    /**
-     * Checks if there's any Admin with this credentials.
-     *
-     * @param Adminname The {@link Admin} object's Adminname.
-     * @param password The {@link Admin} object's password
-     * @return The {@link Admin} object containing the {@link Admin} data.
-     * @throws UpdateException If there is any Exception the process.
-     */
-    public Admin signIn(String username, String password) throws ReadException;
+    public Admin signIn(Admin admin) throws LogicException;
 
     /**
      * Creates an Admin and stores it in the underlying application storage.
      *
      * @param admin The {@link Admin} object containing the admin data.
-     * @throws CreateException If there is any Exception the process.
+     * @throws LogicException If there is any logic exception during the creation process.
      */
-    public void createAdmin(Admin admin) throws CreateException;
+    public void createAdmin(Admin admin) throws LogicException;
 
     /**
      * Updates an admin's data in the underlying application storage.
      *
-     * @param admin The {@link Admin} object containing the admin data.
-     * @throws UpdateException If there is any Exception the process.
+     * @param admin The {@link Admin} object containing the updated admin data.
+     * @throws LogicException If there is any logic exception during the update process.
      */
-    public void updateAdmin(Admin admin) throws UpdateException;
+    public void updateAdmin(Admin admin) throws LogicException;
 
     /**
-     * Deletes an Admin's data in the underlying application storage.
+     * Deletes an Admin's data from the underlying application storage.
      *
-     * @param admin The {@link Admin} object containing the Admadminin data.
-     * @throws DeleteException If there is any Exception the process.
+     * @param id    The ID of the {@link Admin} object to be removed.
+     * @throws LogicException If there is any logic exception during the removal process.
      */
-    public void removeAdmin(Integer id) throws DeleteException;
+    public void removeAdmin(Integer id) throws LogicException;
 }

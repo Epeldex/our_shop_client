@@ -1,20 +1,16 @@
 package logic.interfaces;
 
-import entities.Customer;
-import entities.User;
-import exceptions.CreateException;
-import exceptions.DeleteException;
-import exceptions.ReadException;
-import exceptions.UpdateException;
-import javax.ejb.Local;
+import logic.exceptions.LogicException;
+import transfer.objects.Customer;
+import transfer.objects.User;
 
 /**
- * Local interface for an EJB (Enterprise JavaBeans) session bean responsible
- * for managing customer data. This interface defines methods for updating
- * personal information, deleting a user, inserting a new user, and retrieving
- * customer information.
+ * Interface for communication between the REST client layer and the logic
+ * layer. This interface defines methods for updating personal information,
+ * deleting a user, inserting a new user, retrieving customer information, and
+ * updating the customer balance.
  *
- * @author 2dam
+ * @author Alex Irusta
  */
 public interface CustomerManager {
 
@@ -23,25 +19,25 @@ public interface CustomerManager {
      * ID.
      *
      * @param customer The Customer object containing updated information.
-     * @throws UpdateException If an error occurs during the update process.
+     * @throws LogicException If an error occurs during the update process.
      */
-    public void updateCustomer(Customer customer) throws UpdateException;
+    public void updateCustomer(Customer customer) throws LogicException;
 
     /**
      * Deletes a user (customer) identified by their ID.
      *
      * @param id The ID of the user to be deleted.
-     * @throws DeleteException If an error occurs during the delete process.
+     * @throws LogicException If an error occurs during the delete process.
      */
-    public void deleteCustomerById(Integer id) throws DeleteException;
+    public void deleteCustomerById(Integer id) throws LogicException;
 
     /**
      * Inserts a new user (customer) into the system.
      *
-     * @param user The User object representing the new user.
-     * @throws CreateException If an error occurs during the creation process.
+     * @param customer The User object representing the new user.
+     * @throws LogicException If an error occurs during the creation process.
      */
-    public void insertUser(User user) throws CreateException;
+    public void insertCustomer(Customer customer) throws LogicException;
 
     /**
      * Retrieves customer information for a user identified by their user ID.
@@ -49,9 +45,16 @@ public interface CustomerManager {
      * @param userId The ID of the user for whom customer information is
      * requested.
      * @return The Customer object containing customer information.
-     * @throws ReadException If an error occurs during the read process.
+     * @throws LogicException If an error occurs during the read process.
      */
-    public Customer getCustomer(Integer userId) throws ReadException;
+    public Customer getCustomer(Integer userId) throws LogicException;
 
-    public void updateBalance(Double balance, Integer customerId) throws UpdateException;
+    /**
+     * Updates the balance of a customer identified by their customer ID.
+     *
+     * @param customer The new balance for the customer.
+     * @throws LogicException If an error occurs during the balance update
+     * process.
+     */
+    public void updateBalance(Customer customer) throws LogicException;
 }
