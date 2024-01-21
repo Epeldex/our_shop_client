@@ -51,7 +51,7 @@ public class CustomerManagerImplementation implements CustomerManager {
     public void updateCustomer(Customer customer) throws LogicException {
         try {
             LOGGER.info("CustomerManager: Updating customer with ID " + customer.getId());
-            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(customer.getPassword()))));
+            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(customer.getPassword())));
             webClient.updatePersonalInfo(customer);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception updating customer, {0}", ex.getMessage());
@@ -90,7 +90,7 @@ public class CustomerManagerImplementation implements CustomerManager {
     public void insertCustomer(Customer customer) throws LogicException {
         try {
             LOGGER.info("CustomerManager: Inserting new customer");
-            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(customer.getPassword()))));
+            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(customer.getPassword())));
             webClient.insertCustomer(customer);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception inserting customer, {0}", ex.getMessage());
@@ -133,7 +133,7 @@ public class CustomerManagerImplementation implements CustomerManager {
     public void updateBalance(Customer customer) throws LogicException {
         try {
             LOGGER.info("CustomerManager: Updating balance for customer with ID " + customer.getId());
-            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(customer.getPassword()))));
+            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(customer.getPassword())));
             webClient.updatePersonalInfo(customer);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception updating balance, {0}", ex.getMessage());

@@ -1,4 +1,4 @@
-package exceptions;
+package ui.exceptions;
 
 /**
  * This exception is thrown when a password is considered too short based on a

@@ -1,4 +1,4 @@
-package exceptions;
+package ui.exceptions;
 
 /**
  * This exception is thrown when two passwords provided by a user do not match.

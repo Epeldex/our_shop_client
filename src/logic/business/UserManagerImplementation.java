@@ -1,6 +1,5 @@
 package logic.business;
 
-
 import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
@@ -124,8 +123,12 @@ public class UserManagerImplementation implements UserManager {
     public List<User> findAllUsers() throws LogicException {
         try {
             LOGGER.info("UserManager: Finding all users");
-            return webClient.findAllUsers(new GenericType<List<User>>() {
+            List<User> userList = webClient.findAllUsers(new GenericType<List<User>>() {
             });
+            for (User user : userList) {
+                user.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(user.getPassword())));
+            }
+            return userList;
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception finding all users, {0}", ex.getMessage());
             throw new LogicException("Error finding all users:\n" + ex.getMessage());

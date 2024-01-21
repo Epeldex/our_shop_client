@@ -1,7 +1,7 @@
 package logic.business;
 
-import exceptions.SignInException;
-import exceptions.SignUpException;
+import ui.exceptions.SignInException;
+import ui.exceptions.SignUpException;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,14 +46,14 @@ public class AdminManagerImplementation implements AdminManager {
      *
      * @param admin The {@link Admin} object containing sign-in credentials.
      * @return The signed-in {@link Admin} object.
-     * @throws LogicException If there is any error during the sign-in
+     * @throws SignInException If there is any error during the sign-in
      * operation.
      */
     @Override
     public Admin signIn(Admin admin) throws SignInException {
         try {
             LOGGER.info("AdminManager: Signing in with username " + admin);
-            admin.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(admin.getPassword()))));
+            admin.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(admin.getPassword())));
             Admin receivedAdmin = webClient.signIn(admin, Admin.class);
             receivedAdmin.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(receivedAdmin.getPassword())));
             return receivedAdmin;
@@ -68,14 +68,14 @@ public class AdminManagerImplementation implements AdminManager {
      * service.
      *
      * @param admin The {@link Admin} object to be created.
-     * @throws LogicException If there is any error during the admin creation
+     * @throws SignUpException If there is any error during the admin creation
      * operation.
      */
     @Override
     public void createAdmin(Admin admin) throws SignUpException {
         try {
             LOGGER.info("AdminManager: Creating new admin");
-            admin.setPassword(Base64.getEncoder().encodeToString(em.decryptMessage(admin.getPassword())));
+            admin.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(admin.getPassword())));
             webClient.createAdmin(admin);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "AdminManager: Exception creating admin, {0}", ex.getMessage());
@@ -94,8 +94,8 @@ public class AdminManagerImplementation implements AdminManager {
     @Override
     public void updateAdmin(Admin admin) throws LogicException {
         try {
-            LOGGER.info("AdminManager: Updating admin with ID " + admin.getId());
-            admin.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage(admin.getPassword()))));
+            LOGGER.log(Level.INFO, "AdminManager: Updating admin with ID {0}", admin.getId());
+            admin.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(admin.getPassword())));
             webClient.updateAdmin(admin);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "AdminManager: Exception updating admin, {0}", ex.getMessage());

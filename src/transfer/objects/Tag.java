@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Alexander Epelde
  */
-
 @XmlRootElement
 public class Tag implements Serializable {
 
@@ -210,6 +209,6 @@ public class Tag implements Serializable {
      */
     @Override
     public String toString() {
-        return "Tag [tag_id=" + tag_id + ", type=" + type + ", label=" + label + "]";
+        return type;
     }
 }

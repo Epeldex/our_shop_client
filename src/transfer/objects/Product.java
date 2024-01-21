@@ -47,7 +47,7 @@ public class Product implements Serializable {
     /**
      * Weight of the product.
      */
-    private Float weight;
+    private Double weight;
 
     /**
      * Description of the product.
@@ -174,7 +174,7 @@ public class Product implements Serializable {
      *
      * @return the weight of the product
      */
-    public Float getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
@@ -183,7 +183,7 @@ public class Product implements Serializable {
      *
      * @param weight the weight to set
      */
-    public void setWeight(Float weight) {
+    public void setWeight(Double weight) {
         this.weight = weight;
     }
 
@@ -316,7 +316,7 @@ public class Product implements Serializable {
      */
     @Override
     public String toString() {
-        return "Product [product_id=" + product_id + ", brand=" + brand + ", model=" + model + "]";
+        return "Product " + getProductNumber() + " of brand " + getBrand() + " and model " + getModel();
     }
 
     /**
@@ -346,4 +346,5 @@ public class Product implements Serializable {
         }
         return true;
     }
+
 }

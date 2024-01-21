@@ -15,8 +15,8 @@ import transfer.objects.*;
 public class testmain {
 
     public static void main(String args[]) throws Exception {
-        for (User u : UserManagerFactory.getInstance().findAllUsers()) {
-            System.out.println(u.getPassword());
+        for (Product p : ProductManagerFactory.getInstance().selectAllProducts()) {
+            System.out.println(p.getCreateTimestamp());
         }
 
     }
