@@ -2,7 +2,6 @@ package transfer.objects;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Embeddable;
 
 /**
  * The ProductsBoughtId class represents the composite key for the

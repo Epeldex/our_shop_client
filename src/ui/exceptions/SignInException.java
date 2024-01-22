@@ -1,4 +1,4 @@
-package exceptions;
+package ui.exceptions;
 
 public class SignInException extends Exception {
     private String message;

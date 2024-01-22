@@ -6,13 +6,13 @@
 package util;
 
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import logic.encryption.EncriptionManager;
-import logic.encryption.EncriptionManagerFactory;
+import logic.exceptions.LogicException;
+import logic.factories.SupplierManagerFactory;
+import logic.factories.TagManagerFactory;
 import transfer.objects.*;
-import rest.*;
 
 /**
  *
@@ -20,26 +20,44 @@ import rest.*;
  */
 public class DataGenerator {
 
-    private static final EncriptionManager em = EncriptionManagerFactory.getInstance();
+    public static Customer getRandomCustomer() {
+        Customer customer = new Customer();
+        customer.setUsername("customer" + new Random().nextInt(10000));
+        customer.setPassword("abcd*1234");
+        customer.setActive(true);
+        customer.setUserType(UserType.CUSTOMER);
+        customer.setBalance(new Random().nextDouble() * new Random().nextInt(10000));
+        customer.setCity("city" + new Random().nextInt(1000));
+        customer.setFullName(customer.getUsername());
+        customer.setPhone(buildRandomPhone());
+        customer.setPostalCode(new Random().nextInt(49999));
+        customer.setStreet("street" + new Random().nextInt(1000));
+        customer.setEmail(customer.getUsername() + "@gmail.com");
+        return customer;
+    }
 
-    public static List<Customer> getRandomCustomerList() throws Exception {
+    public static List<Customer> getRandomCustomerList() {
         List<Customer> customers = new ArrayList();
         for (int i = 1; i < 10; i++) {
-            Customer customer = new Customer();
-            customer.setUsername("customer" + new Random().nextInt(10000));
-            customer.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(em.hashMessage("abcd*1234"))));
-            customer.setActive(true);
-            customer.setUserType(UserType.CUSTOMER);
-            customer.setBalance(new Random().nextDouble() * i * new Random().nextInt(2048));
-            customer.setCity("city" + i);
-            customer.setFullName(customer.getUsername());
-            customer.setPhone(buildRandomPhone());
-            customer.setPostalCode(new Random().nextInt(49999));
-            customer.setStreet("street" + i);
-            customer.setEmail(customer.getUsername() + "@gmail.com");
-            customers.add(customer);
+            customers.add(getRandomCustomer());
         }
         return customers;
+    }
+
+    public static Product getRandomProduct() throws LogicException {
+        Product product = new Product();
+        product.setBrand("brand" + new Random().nextInt(1000));
+        product.setCreateTimestamp(new Date());
+        product.setModel("model" + new Random().nextInt(1000));
+        product.setOtherInfo(" ");
+        product.setWeight(new Random().nextDouble() * new Random().nextInt(1000));
+        product.setPrice(new Random().nextDouble() * new Random().nextInt(10000));
+        product.setProductNumber("PN" + new Random().nextInt());
+        product.setSupplier(SupplierManagerFactory.getInstance().selectAllSuppliers().get(1));
+        product.setTag(TagManagerFactory.getInstance().selectAllTags().get(1));
+        product.setDescription(product.toString());
+
+        return product;
     }
 
     private static String buildRandomPhone() {
@@ -50,4 +68,5 @@ public class DataGenerator {
         }
         return phone;
     }
+
 }

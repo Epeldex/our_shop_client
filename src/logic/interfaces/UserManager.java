@@ -4,7 +4,6 @@ import java.util.List;
 import logic.exceptions.LogicException;
 import transfer.objects.User;
 
-import exceptions.*;
 
 /**
  * Interface for managing {@link User} operations. This interface defines

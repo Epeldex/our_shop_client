@@ -10,64 +10,65 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
-  <children>
-      <fx:include fx:id="menuBox" source="menu_bar.fxml" />
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-         <children>
-            <Label layoutX="539.0" layoutY="51.0" text="Product management">
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Label>
-            <Button fx:id="btnListProducts" defaultButton="true" layoutX="112.0" layoutY="97.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="135.0" text="List Products">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
-            <Button fx:id="btnAdd" layoutX="1216.0" layoutY="180.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="136.0" text="Add">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
-            <Button fx:id="btnDelete" disable="true" layoutX="1216.0" layoutY="242.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="135.0" text="Delete">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
-            <Button fx:id="btnEdit" disable="true" layoutX="1216.0" layoutY="296.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="136.0" text="Edit">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
-            <TableView fx:id="tvProduct" editable="true" layoutX="114.0" layoutY="180.0" prefHeight="426.0" prefWidth="1072.0">
-              <columns>
-                <TableColumn fx:id="cProductNumber" prefWidth="117.6000747680664" text="Product Number" />
-                <TableColumn fx:id="cBrand" prefWidth="87.99995422363281" text="Brand" />
-                  <TableColumn fx:id="cModel" prefWidth="94.4000244140625" text="Model" />
-                  <TableColumn fx:id="cWeight" prefWidth="77.5999755859375" text="Weight" />
-                  <TableColumn fx:id="cPrice" prefWidth="81.59991455078125" text="Price" />
-                  <TableColumn fx:id="cDescription" prefWidth="179.199951171875" text="Description" />
-                  <TableColumn fx:id="cOtherInfo" prefWidth="121.5999755859375" text="Other information" />
-                  <TableColumn fx:id="cAdditionDate" prefWidth="114.4000244140625" text="Addition Date" />
-                  <TableColumn fx:id="cSupplier" prefWidth="114.39990234375" text="Supplier" />
-                  <TableColumn fx:id="cTag" text="Tag" />
-              </columns>
-               <contextMenu>
-                  <ContextMenu fx:id="contextMenu">
-                    <items>
-                      <MenuItem fx:id="miAdd" mnemonicParsing="false" text="Add product" />
-                        <MenuItem fx:id="miEdit" disable="true" mnemonicParsing="false" text="Edit" />
-                        <MenuItem fx:id="miDelete" disable="true" mnemonicParsing="false" text="Delete row" />
-                    </items>
-                  </ContextMenu>
-               </contextMenu>
-            </TableView>
-            <Button fx:id="btnExit" layoutX="112.0" layoutY="651.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="135.0" text="Exit">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
-         </children></AnchorPane>
-  </children>
+<VBox prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.controller.ProductViewController">
+    <children>
+        <fx:include fx:id="menuBox" source="menu_bar.fxml" />
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+            <children>
+                <Label layoutX="539.0" layoutY="51.0" text="Product management">
+                    <font>
+                        <Font size="30.0" />
+                    </font>
+                </Label>
+                <Button fx:id="btnListProducts" defaultButton="true" layoutX="112.0" layoutY="97.0" mnemonicParsing="false" onAction="#handleListProducts" prefHeight="39.0" prefWidth="135.0" text="List Products">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Button>
+                <Button fx:id="btnAdd" layoutX="1216.0" layoutY="180.0" mnemonicParsing="false" onAction="#handleAddProduct" prefHeight="39.0" prefWidth="136.0" text="Add">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Button>
+                <Button fx:id="btnDelete" disable="true" layoutX="1216.0" layoutY="242.0" mnemonicParsing="false" onAction="#handleDeleteProduct" prefHeight="39.0" prefWidth="135.0" text="Delete">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Button>
+                <Button fx:id="btnEdit" disable="true" layoutX="1216.0" layoutY="296.0" mnemonicParsing="false" onAction="#handleEditProduct" prefHeight="39.0" prefWidth="136.0" text="Edit">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Button>
+                <TableView fx:id="tvProduct" editable="true" layoutX="114.0" layoutY="180.0" prefHeight="426.0" prefWidth="1072.0">
+                    <columns>
+                        <TableColumn fx:id="cProductNumber" prefWidth="117.6000747680664" text="Product Number" />
+                        <TableColumn fx:id="cBrand" onEditCommit="#handleBrandCellEdition" prefWidth="87.99995422363281" text="Brand" />
+                        <TableColumn fx:id="cModel" onEditCommit="#handleModelCellEdition" prefWidth="94.4000244140625" text="Model" />
+                        <TableColumn fx:id="cWeight" onEditCommit="#handleWeightCellEdition" prefWidth="77.5999755859375" text="Weight" />
+                        <TableColumn fx:id="cPrice" onEditCommit="#handlePriceCellEdition" prefWidth="81.59991455078125" text="Price" />
+                        <TableColumn fx:id="cDescription" onEditCommit="#handleDescriptionCellEdition" prefWidth="179.199951171875" text="Description" />
+                        <TableColumn fx:id="cOtherInfo" onEditCommit="#handleOtherInfoCellEdition" prefWidth="121.5999755859375" text="Other information" />
+                        <TableColumn fx:id="cAdditionDate" onEditCommit="#handleAdditionDateCellEdition" prefWidth="114.4000244140625" text="Addition Date" />
+                        <TableColumn fx:id="cSupplier" onEditCommit="#handleSupplierCellEdition" prefWidth="114.39990234375" text="Supplier" />
+                        <TableColumn fx:id="cTag" onEditCommit="#handleTagCellEdition" prefWidth="78.0" text="Tag" />
+                    </columns>
+                    <contextMenu>
+                        <ContextMenu fx:id="contextMenu">
+                            <items>
+                                <MenuItem fx:id="miAdd" mnemonicParsing="false" onAction="#handleAddProduct" text="Add product" />
+                                <MenuItem fx:id="miEdit" disable="true" mnemonicParsing="false" onAction="#handleEditProduct" text="Edit" />
+                                <MenuItem fx:id="miDelete" disable="true" mnemonicParsing="false" onAction="#handleDeleteProduct" text="Delete row" />
+                            </items>
+                        </ContextMenu>
+                    </contextMenu>
+                </TableView>
+                <Button fx:id="btnExit" layoutX="112.0" layoutY="651.0" mnemonicParsing="false" onAction="#handleExitButton" prefHeight="39.0" prefWidth="135.0" text="Exit">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Button>
+            </children>
+        </AnchorPane>
+    </children>
 </VBox>

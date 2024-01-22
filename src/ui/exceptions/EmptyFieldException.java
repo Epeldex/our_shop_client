@@ -1,4 +1,4 @@
-package exceptions;
+package ui.exceptions;
 
 /**
  * This exception is thrown when a field is expected to have a value but is
