@@ -32,7 +32,7 @@ import javafx.scene.text.Text;
  * @author Dani
  * @author Alex Epelde
  */
-public abstract class UsernameManagingGenericController {
+public class GenericController {
 
     protected static Image logo = new Image("resources/img/app_logo.png");
 
@@ -85,17 +85,14 @@ public abstract class UsernameManagingGenericController {
 
     }
  
-
-    
-
     /**
      * method that analyses the username
      *
-     * @param username username to be checked
+     * @param email username to be checked
      * @return true if value is correct
      * @throws IncorrectFormatException if value doesn't match condition.
      */
-    protected boolean validateUsername(String username) throws EmptyFieldException, IncorrectFormatException{       
+    protected boolean validateUsername(String username) throws EmptyFieldException, IncorrectFormatException {
         if (username.isEmpty())
             throw new EmptyFieldException("The username cannot be empty");
 
@@ -104,14 +101,49 @@ public abstract class UsernameManagingGenericController {
 
         if (MAX_LENGTH < username.length())
             throw new IncorrectFormatException("The username is too long");
+
+        if (username.length() < 3)
+            throw new IncorrectFormatException("The username must be at least 3 characters long");
         
-        Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+        Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[a-zA-Z0-9._-]{3,}$",
                 Pattern.CASE_INSENSITIVE);
 
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(username);
 
+        if (!matcher.matches()) 
+            throw new IncorrectFormatException("The username must have only letters, numbers and '-', '/' or '_'");
+
+        
+
+        
+        return true; 
+    }
+    
+
+    /**
+     * method that analyses the email
+     *
+     * @param email username to be checked
+     * @return true if value is correct
+     * @throws IncorrectFormatException if value doesn't match condition.
+     */
+    protected boolean validateEmail(String email) throws EmptyFieldException, IncorrectFormatException{       
+        if (email.isEmpty())
+            throw new EmptyFieldException("The email cannot be empty");
+
+        if (email.contains(" ")) 
+            throw new IncorrectFormatException("The email cannot have spaces");
+
+        if (MAX_LENGTH < email.length())
+            throw new IncorrectFormatException("The email is too long");
+        
+        Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+                Pattern.CASE_INSENSITIVE);
+
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+
         if (!matcher.matches())
-            throw new IncorrectFormatException("The username must be an email");
+            throw new IncorrectFormatException("The email must be an email");
 
         return true;
     }

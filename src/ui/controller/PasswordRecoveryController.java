@@ -1,14 +1,9 @@
 package ui.controller;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
+
 import java.util.Date;
 import java.util.Properties;
+
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -16,8 +11,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.validation.Path;
-import javax.validation.constraints.Email;
 
 import animatefx.animation.Jello;
 import animatefx.animation.Swing;
@@ -35,7 +28,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 
-public class PasswordRecoveryController extends UsernameManagingGenericController {
+public class PasswordRecoveryController extends GenericController {
 
     @FXML
     private TextField emailTextField;

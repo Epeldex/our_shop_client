@@ -27,7 +27,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 
-public class LoginController extends UsernameManagingGenericController {
+public class LoginController extends GenericController {
 
     /**
      * Label for displaying error messages for both login and password.

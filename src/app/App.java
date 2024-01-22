@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ui.controller.LoginController;
-import ui.controller.SignUpController;
 
 public class App extends Application {
 

@@ -13,13 +13,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -29,7 +27,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class SignUpController extends UsernameManagingGenericController {
+public class SignUpController extends GenericController {
 
         @FXML
         private Text usernameErrorText, password1ErrorText, password2ErrorText, emailErrorText,
@@ -285,7 +283,7 @@ public class SignUpController extends UsernameManagingGenericController {
 
                 if (triedToSignUp) {
                         try {
-                                validateUsername(newValue);
+                                validateEmail(newValue);
 
                                 // If there are no errors, hide labels
                                 emailErrorText.setVisible(false);
@@ -462,17 +460,10 @@ public class SignUpController extends UsernameManagingGenericController {
                 
                 handleUsername(null, null, usernameTextField.getText());
 
-                if (passwordField1.isVisible())
-                        handlePassword1(null, null, passwordField1.getText());
-                else
-                        handlePassword1(null, null, passwordTextField2.getText());
-
-                if (passwordField2.isVisible())
-                        handlePassword2(null, null, passwordField2.getText());
-                else
-                        handlePassword2(null, null, passwordTextField2.getText());
-
-
+                handlePassword1(null, null, passwordField1.getText());
+        
+                handlePassword2(null, null, passwordField2.getText());
+               
                 handleEmail(null, null, emailTextField.getText());
                 handleFullName(null, null, fullNameTextField.getText());
                 handleAdress(null, null, adressTextField.getText());
