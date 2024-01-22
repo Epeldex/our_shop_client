@@ -154,7 +154,7 @@
                      </font>
                   </Text>
                   <Button fx:id="loginButton" layoutX="497.0" layoutY="479.0" mnemonicParsing="false" styleClass="transparent-button" text="LOGIN" textFill="#868686" />
-                  <Text fx:id="usernameErrorText" fill="#ff6161" layoutX="157.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username cannot have spaces" textAlignment="RIGHT" wrappingWidth="158.93670654296875">
+                  <Text fx:id="usernameErrorText" fill="#ff6161" layoutX="157.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The username must have only letters, numbers and '-', '/' or '_'" textAlignment="RIGHT" wrappingWidth="158.45623779296875">
                      <font>
                         <Font name="Roboto Medium" size="10.0" />
                      </font>
