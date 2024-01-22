@@ -1,7 +1,8 @@
 package ui.controller;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,18 +15,11 @@ public class ReadHTMLFile {
         // Specify the path to your HTML file
         try {
 
-            URI uri = ClassLoader.getSystemResource("com/stackoverflow/json").toURI();
-            String mainPath = Paths.get(uri).toString();
-            Path path = Paths.get(mainPath, "Movie.class"); 
+            URL url = getClass().getResource("/resources/Email.html");
+            File file = new File(url.getPath());
 
-            String filePath = getClass().getClassLoader().getResource("ui/controller/Email.html").toString();
+            return readHtmlFile(file);
 
-            String htmlContent = null;
-
-            System.out.println(filePath);
-            htmlContent = readHtmlFile(filePath);
-
-            return htmlContent;
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -33,9 +27,9 @@ public class ReadHTMLFile {
         return "";
     }
 
-    private String readHtmlFile(String filePath) throws IOException {
+    private String readHtmlFile(File file) throws IOException {
         // Use Paths.get to create a Path object from the file path
-        Path path = Paths.get(filePath);
+        Path path = Paths.get(file.getAbsolutePath());
 
         // Use Files.readAllBytes to read the content of the file into a byte array
         byte[] bytes = Files.readAllBytes(path);
