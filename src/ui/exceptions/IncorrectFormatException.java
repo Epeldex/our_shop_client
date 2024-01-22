@@ -1,4 +1,4 @@
-package exceptions;
+package ui.exceptions;
 
 /**
  * This exception is thrown when a data format does not match the expected

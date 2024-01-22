@@ -1,6 +1,7 @@
 package logic.interfaces;
 
-import exceptions.*;
+import ui.exceptions.SignInException;
+import ui.exceptions.SignUpException;
 
 import logic.exceptions.LogicException;
 import transfer.objects.Admin;
@@ -10,8 +11,6 @@ public interface AdminManager {
     /**
      * Checks if there's any Admin with this credentials.
      *
-     * @param Adminname The {@link Admin} object's Adminname.
-     * @param password The {@link Admin} object's password
      * @return The {@link Admin} object containing the {@link Admin} data.
      * @throws SignInException If there is any Exception the process.
      */

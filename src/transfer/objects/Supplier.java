@@ -3,22 +3,7 @@ package transfer.objects;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-import static javax.persistence.CascadeType.ALL;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import static javax.persistence.FetchType.EAGER;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Entity representing suppliers. It contains fields such as supplier ID, name,
@@ -30,6 +15,14 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlRootElement
 public class Supplier implements Serializable {
+
+    public Supplier() {
+        this.name = name;
+    }
+
+    public Supplier(String name) {
+        this.name = name;
+    }
 
     /**
      * Identification field for the supplier.
@@ -237,6 +230,13 @@ public class Supplier implements Serializable {
      */
     @Override
     public String toString() {
-        return "Supplier [supplier_id=" + supplier_id + ", name=" + name + "]";
+        return name;
+    }
+
+
+    public boolean isEmpty() {
+        if (supplier_id == null && name == null)
+            return true;
+        return false;
     }
 }

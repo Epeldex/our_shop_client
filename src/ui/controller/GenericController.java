@@ -5,16 +5,17 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import exceptions.EmptyFieldException;
-import exceptions.IncorrectFormatException;
-import exceptions.PasswordTooShortException;
-
 import java.util.Optional;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.stage.WindowEvent;
 
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.control.ButtonType;
+import ui.exceptions.EmptyFieldException;
+import ui.exceptions.IncorrectFormatException;
+import ui.exceptions.PasswordTooShortException;
 
 /**
  * An abstract base controller class for JavaFX applications. This class
@@ -139,7 +140,6 @@ public abstract class GenericController {
      * @throws PasswordTooShortException If the password is too short, this
      * exception is thrown.
      * @throws EmptyFieldException If the password is empty, this exception is
-     * thrown. =======
      */
     protected void validatePassword(String password)
             throws IncorrectFormatException, PasswordTooShortException, EmptyFieldException {
@@ -152,12 +152,12 @@ public abstract class GenericController {
      * action that will be executed when the user tries to close the
      * application.
      */
-    protected void closeRequest() {
+    protected void showExitDialog() {
         Optional<ButtonType> action = new Alert(Alert.AlertType.CONFIRMATION,
                 "Are you sure you want to exit the application?").showAndWait();
         if (action.get() == ButtonType.OK) {
             Logger.getLogger(App.class.getName()).info("Exiting application");
-            stage.close();
+            Platform.exit();
         }
     }
 
@@ -167,7 +167,36 @@ public abstract class GenericController {
     protected void handleCloseRequest(WindowEvent event) {
         event.consume();
         if (event.getEventType().equals(WindowEvent.WINDOW_CLOSE_REQUEST)) {
-            closeRequest();
+            showExitDialog();
         }
+    }
+
+    protected void showErrorAlert(String title, String headerText, String contentText) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+
+        alert.showAndWait();
+    }
+
+    public void handleLogOutAction(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Log Out");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to log out?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // TODO: Mostrar la ventana de inicio de sesión (Log In)
+        }
+    }
+
+    protected boolean showConfirmationDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm launch new window");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        return alert.showAndWait().filter(result -> result == ButtonType.OK).isPresent();
     }
 }
