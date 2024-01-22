@@ -1,6 +1,6 @@
 package logic.exceptions;
 
-public class PasswordsDoNotMatchException {
+public class PasswordsDoNotMatchException extends Exception {
     private String message;
 
     public PasswordsDoNotMatchException() {}
