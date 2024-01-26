@@ -9,12 +9,12 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import transfer.objects.Product;
 
-public class DatePickerTableCell extends TableCell<Product, Date> {
+public class ProductDatePickerTableCell extends TableCell<Product, Date> {
 
     private DatePicker datePicker;
     private static DateFormat dateFormatter;
 
-    public DatePickerTableCell() {
+    public ProductDatePickerTableCell() {
         dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
     }
 

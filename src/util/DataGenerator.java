@@ -43,7 +43,21 @@ public class DataGenerator {
         }
         return customers;
     }
+    
+    public static Supplier getRandomSupplier() {
+    Supplier supplier = new Supplier();
+    supplier.setName("supplier" + new Random().nextInt(1000));
+    supplier.setPhone(buildRandomPhone());
+    supplier.setCountry("country" + new Random().nextInt(100));
+    supplier.setZip(new Random().nextInt(99999));
+    supplier.setCreateTimestamp(new Date());
+    return supplier;
+}
 
+    
+    
+    
+    
     public static Product getRandomProduct() throws LogicException {
         Product product = new Product();
         product.setBrand("brand" + new Random().nextInt(1000));

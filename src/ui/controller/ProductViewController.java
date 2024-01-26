@@ -6,7 +6,7 @@
 package ui.controller;
 
 import ui.controls.EditableComboBoxTableCell;
-import ui.controls.DatePickerTableCell;
+import ui.controls.ProductDatePickerTableCell;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -748,13 +748,13 @@ public class ProductViewController extends GenericController {
     }
 
     /**
-     * Returns a Callback for creating a DatePickerTableCell for the "Addition
-     * Date" column.
+     * Returns a Callback for creating a ProductDatePickerTableCell for the "Addition
+ Date" column.
      *
-     * @return A Callback for creating a DatePickerTableCell.
+     * @return A Callback for creating a ProductDatePickerTableCell.
      */
     private Callback<TableColumn<Product, Date>, TableCell<Product, Date>> getDatePickerCellFactory() {
-        return (TableColumn<Product, Date> param) -> new DatePickerTableCell();
+        return (TableColumn<Product, Date> param) -> new ProductDatePickerTableCell();
     }
 
     /**
