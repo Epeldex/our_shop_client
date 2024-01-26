@@ -5,12 +5,19 @@
  */
 package ui.controller;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import ui.controls.EditableComboBoxTableCell;
 import ui.controls.DatePickerTableCell;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.beans.Observable;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -32,7 +39,6 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
-import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import logic.exceptions.LogicException;
 import logic.factories.ProductManagerFactory;
@@ -145,7 +151,7 @@ public class ProductViewController extends GenericController {
      * TableColumn for the date of product addition in the TableView.
      */
     @FXML
-    private TableColumn<Product, Date> cAdditionDate;
+    private TableColumn<Product, LocalDate> cAdditionDate;
 
     /**
      * TableColumn for supplier information in the TableView.
@@ -222,7 +228,6 @@ public class ProductViewController extends GenericController {
         stage.setScene(scene);
 
         // Configure stage properties
-        stage.initStyle(StageStyle.DECORATED);
         stage.setTitle("Product Management");
         stage.setResizable(false);
 
@@ -240,7 +245,9 @@ public class ProductViewController extends GenericController {
         cPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         cDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         cOtherInfo.setCellValueFactory(new PropertyValueFactory<>("otherInfo"));
-        cAdditionDate.setCellValueFactory(new PropertyValueFactory<>("createTimestamp"));
+        cAdditionDate.setCellValueFactory(factory -> {
+            return getDateToLocalDateValueFactory(factory);
+        });
         cSupplier.setCellValueFactory(new PropertyValueFactory<>("supplier"));
         cTag.setCellValueFactory(new PropertyValueFactory<>("tag"));
 
@@ -257,7 +264,6 @@ public class ProductViewController extends GenericController {
 
         // Configure selection listener for the TableView
         tvProduct.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
-
         // Initialize product list and set it to the TableView
         productList = FXCollections.observableArrayList();
         tvProduct.setItems(productList);
@@ -286,7 +292,7 @@ public class ProductViewController extends GenericController {
      * @param event The Observable event representing the item selection.
      */
     private void handleSelectedItem(Observable event) {
-        if (event != null) {
+        if (tvProduct.getSelectionModel().getSelectedItem() != null) {
             // Enable edit and delete buttons and menu items
             btnEdit.setDisable(false);
             btnDelete.setDisable(false);
@@ -321,6 +327,8 @@ public class ProductViewController extends GenericController {
             // Log and show an error alert if an exception occurs
             LOGGER.severe("Error adding products to the table");
             showErrorAlert("ERROR", "Error listing products", ex.getMessage());
+        } finally {
+            tvProduct.getSelectionModel().clearSelection();
         }
     }
 
@@ -409,6 +417,8 @@ public class ProductViewController extends GenericController {
         } catch (Exception e) {
             // Show an error alert if an exception occurs during deletion
             showErrorAlert("Error Deleting Product", "An error occurred while deleting a Product.", e.getMessage());
+        } finally {
+            tvProduct.getSelectionModel().clearSelection();
         }
     }
 
@@ -727,21 +737,21 @@ public class ProductViewController extends GenericController {
      * @param event The CellEditEvent object for the event.
      */
     @FXML
-    private void handleAdditionDateCellEdition(CellEditEvent<Product, Date> event) {
+    private void handleAdditionDateCellEdition(CellEditEvent<Product, LocalDate> event) {
         try {
             Product editedProduct = event.getRowValue();
-            editedProduct.setCreateTimestamp(event.getNewValue());
+            editedProduct.setCreateTimestamp(Date.from(event.getNewValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
             productManager.updateProduct(editedProduct);
 
             // Set the value of the cell with the new value
             event.getTableView().getItems().get(event.getTablePosition().getRow())
-                    .setCreateTimestamp(event.getNewValue());
+                    .setCreateTimestamp(Date.from(event.getNewValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
         } catch (Exception e) {
             showErrorAlert("Error", "An error occurred while editing the cell", e.getMessage());
 
             // Set the value of the cell to the initial value
             event.getTableView().getItems().get(event.getTablePosition().getRow())
-                    .setCreateTimestamp(event.getOldValue());
+                    .setCreateTimestamp(Date.from(event.getNewValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
         } finally {
             tvProduct.refresh();
         }
@@ -753,8 +763,8 @@ public class ProductViewController extends GenericController {
      *
      * @return A Callback for creating a DatePickerTableCell.
      */
-    private Callback<TableColumn<Product, Date>, TableCell<Product, Date>> getDatePickerCellFactory() {
-        return (TableColumn<Product, Date> param) -> new DatePickerTableCell();
+    private Callback<TableColumn<Product, LocalDate>, TableCell<Product, LocalDate>> getDatePickerCellFactory() {
+        return (TableColumn<Product, LocalDate> param) -> new DatePickerTableCell();
     }
 
     /**
@@ -802,6 +812,12 @@ public class ProductViewController extends GenericController {
      */
     private void launchSupplierWindow() {
         // TODO
+    }
+
+    private ObservableValue<LocalDate> getDateToLocalDateValueFactory(TableColumn.CellDataFeatures<Product, LocalDate> factory) {
+        return new SimpleObjectProperty<LocalDate>(factory.getValue().getCreateTimestamp()
+                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+
     }
 
 }
