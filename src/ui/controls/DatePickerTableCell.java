@@ -2,20 +2,27 @@ package ui.controls;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import transfer.objects.Product;
+import ui.controller.LocalDateStringConverter;
 
-public class DatePickerTableCell extends TableCell<Product, Date> {
+public class DatePickerTableCell extends TableCell<Product, LocalDate> {
 
     private DatePicker datePicker;
-    private static DateFormat dateFormatter;
+    private String oldValue;
+    private static DateFormat dateFormat;
+    private static DateTimeFormatter dateFormatter;
 
     public DatePickerTableCell() {
-        dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
+        dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
+        dateFormatter = DateTimeFormatter.ofPattern(SimpleDateFormat.class.cast(dateFormat).toPattern());
+
     }
 
     @Override
@@ -23,11 +30,14 @@ public class DatePickerTableCell extends TableCell<Product, Date> {
         if (!isEmpty()) {
             super.startEdit();
             datePicker = new DatePicker();
+            datePicker.setConverter(new LocalDateStringConverter(dateFormat));
+            oldValue = datePicker.getEditor().getText();
 
             // Set prompt text with an example date
-            datePicker.setPromptText(SimpleDateFormat.class.cast(dateFormatter).toPattern());
+            datePicker.setPromptText(SimpleDateFormat.class.cast(dateFormat).toPattern());
             datePicker.setOnAction((event) -> {
-                commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                commitEdit(Instant.ofEpochMilli(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                        .atZone(ZoneId.systemDefault()).toLocalDate());
             });
             setText(null);
             setGraphic(datePicker);
@@ -35,7 +45,7 @@ public class DatePickerTableCell extends TableCell<Product, Date> {
     }
 
     @Override
-    public void updateItem(Date item, boolean empty) {
+    public void updateItem(LocalDate item, boolean empty) {
         super.updateItem(item, empty);
 
         if (empty) {
@@ -57,6 +67,7 @@ public class DatePickerTableCell extends TableCell<Product, Date> {
     public void cancelEdit() {
         setGraphic(null);
         super.cancelEdit();
+        setText(oldValue);
     }
 
 }

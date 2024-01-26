@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import logic.exceptions.LogicException;
 import logic.factories.SupplierManagerFactory;
 import logic.factories.TagManagerFactory;
@@ -19,7 +20,7 @@ import transfer.objects.*;
  * @author alexa
  */
 public class DataGenerator {
-
+    
     public static Customer getRandomCustomer() {
         Customer customer = new Customer();
         customer.setUsername("customer" + new Random().nextInt(10000));
@@ -35,7 +36,7 @@ public class DataGenerator {
         customer.setEmail(customer.getUsername() + "@gmail.com");
         return customer;
     }
-
+    
     public static List<Customer> getRandomCustomerList() {
         List<Customer> customers = new ArrayList();
         for (int i = 1; i < 10; i++) {
@@ -43,23 +44,25 @@ public class DataGenerator {
         }
         return customers;
     }
-
+    
     public static Product getRandomProduct() throws LogicException {
         Product product = new Product();
         product.setBrand("brand" + new Random().nextInt(1000));
-        product.setCreateTimestamp(new Date());
+        product.setCreateTimestamp(new Date(new Random().nextLong() % (new Date(120, 11, 31).getTime() - new Date(90, 0, 1).getTime()) + new Date(90, 0, 1).getTime()));
         product.setModel("model" + new Random().nextInt(1000));
         product.setOtherInfo(" ");
         product.setWeight(new Random().nextDouble() * new Random().nextInt(1000));
         product.setPrice(new Random().nextDouble() * new Random().nextInt(10000));
         product.setProductNumber("PN" + new Random().nextInt());
-        product.setSupplier(SupplierManagerFactory.getInstance().selectAllSuppliers().get(1));
+        
+        List<Supplier> suppliers = SupplierManagerFactory.getInstance().selectAllSuppliers();
+        product.setSupplier(suppliers.get(new Random().nextInt(suppliers.size())));
         product.setTag(TagManagerFactory.getInstance().selectAllTags().get(1));
         product.setDescription(product.toString());
-
+        
         return product;
     }
-
+    
     private static String buildRandomPhone() {
         String phone = new String();
         for (int i = 0; i < 9; i++) {
@@ -68,5 +71,5 @@ public class DataGenerator {
         }
         return phone;
     }
-
+    
 }
