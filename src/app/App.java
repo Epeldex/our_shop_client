@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ui.controller.SupplierManagementController;
 
+
 public class App extends Application {
 
     /**
