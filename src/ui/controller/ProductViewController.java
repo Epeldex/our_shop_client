@@ -329,6 +329,7 @@ public class ProductViewController extends GenericController {
             showErrorAlert("ERROR", "Error listing products", ex.getMessage());
         } finally {
             tvProduct.getSelectionModel().clearSelection();
+            tvProduct.refresh();
         }
     }
 
@@ -390,6 +391,8 @@ public class ProductViewController extends GenericController {
         } catch (Exception e) {
             // Show an error alert if an exception occurs during editing
             showErrorAlert("Error Editing Product", "An error occurred while editing a Product.", e.getMessage());
+        } finally {
+            tvProduct.refresh();
         }
     }
 
@@ -758,8 +761,8 @@ public class ProductViewController extends GenericController {
     }
 
     /**
-     * Returns a Callback for creating a ProductDatePickerTableCell for the "Addition
- Date" column.
+     * Returns a Callback for creating a ProductDatePickerTableCell for the
+     * "Addition Date" column.
      *
      * @return A Callback for creating a ProductDatePickerTableCell.
      */

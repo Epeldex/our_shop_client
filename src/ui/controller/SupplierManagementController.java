@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Date;
@@ -31,6 +32,7 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.util.converter.IntegerStringConverter;
+import transfer.objects.Product;
 import util.DataGenerator;
 
 public class SupplierManagementController extends GenericController {
@@ -78,7 +80,7 @@ public class SupplierManagementController extends GenericController {
     private TableColumn<Supplier, Integer> zipColumnId;
 
     @FXML
-    private TableColumn<Supplier, Date> dateColumnId;
+    private TableColumn<Supplier, LocalDate> dateColumnId;
 
     @FXML
     private HBox menuBox;
@@ -101,11 +103,8 @@ public class SupplierManagementController extends GenericController {
         btnAdd.setOnAction(event -> handleAddButtonAction(event));
         btnEdit.setOnAction(event -> handleEditButtonAction(event));
         btnDelete.setOnAction(event -> handleDeleteButtonAction());
-       
-        
-        
-        //btnEdit.setVisible(false);
 
+        //btnEdit.setVisible(false);
         // Agrega un manejador para el evento de cierre de la ventana
         stage.setOnCloseRequest(event -> handleCloseRequest(event, stage));
 
@@ -131,12 +130,15 @@ public class SupplierManagementController extends GenericController {
         phoneColumnId.setCellValueFactory(new PropertyValueFactory<>("phone"));
         countryColumnId.setCellValueFactory(new PropertyValueFactory<>("country"));
         zipColumnId.setCellValueFactory(new PropertyValueFactory<>("zip"));
-        //dateColumnId.setCellValueFactory(getSupplierDatePickerCellFactory());
+        dateColumnId.setCellValueFactory(factory -> {
+            return getDateToLocalDateValueFactory(factory);
+        });
 
         // Ajusta el nombre de la columna según tus necesidades
         nameColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
         dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
         countryColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
+        dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
 
         phoneColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
         phoneColumnId.setOnEditCommit(this::handlePhoneCellEdition);
@@ -146,13 +148,14 @@ public class SupplierManagementController extends GenericController {
 
         nameColumnId.setOnEditCommit(this::handleNameCellEdition);
         countryColumnId.setOnEditCommit(this::handleCountryCellEdition);
+        dateColumnId.setOnEditCommit(this::handleAdditionDateCellEdition);
 
         // Añadir la columna a la tabla
         // (asumiendo que tu tabla ya está creada y tiene un modelo de datos asociado)
         tvSupplier.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
 
         supplierList = FXCollections.observableArrayList();
-        
+
         stage.show();
     }
 
@@ -182,7 +185,7 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
-  @FXML
+    @FXML
     private void handleAddButtonAction(ActionEvent event) {
         try {
             // Log button press and add a new random supplier
@@ -204,7 +207,6 @@ public class SupplierManagementController extends GenericController {
             tvSupplier.refresh();
         }
     }
-
 
     @FXML
     private void handleEditButtonAction(ActionEvent event) {
@@ -417,8 +419,32 @@ public class SupplierManagementController extends GenericController {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             Platform.exit();
         }
-
     }
+    
+      @FXML
+    private void handleAdditionDateCellEdition(CellEditEvent<Supplier, LocalDate> event) {
+        try {
+            Supplier editedSupplier = event.getRowValue();
+            editedSupplier.setCreateTimestamp(Date.from(event.getNewValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            supplierManager.updateSupplier(editedSupplier);
+
+            // Set the value of the cell with the new value
+            event.getTableView().getItems().get(event.getTablePosition().getRow())
+                    .setCreateTimestamp(Date.from(event.getNewValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        } catch (Exception e) {
+            showErrorAlert("Error", "An error occurred while editing the cell", e.getMessage());
+
+            // Set the value of the cell to the initial value
+            event.getTableView().getItems().get(event.getTablePosition().getRow())
+                    .setCreateTimestamp(Date.from(event.getNewValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        } finally {
+            tvSupplier.refresh();
+        }
+    }
+
+    
+    
+    
 
     @FXML
     private void handlePhoneCellEdition(CellEditEvent<Supplier, String> event) {
@@ -447,7 +473,13 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
-    private Callback<TableColumn<Supplier, Date>, TableCell<Supplier, Date>> getSupplierDatePickerCellFactory() {
-        return (TableColumn<Supplier, Date> param) -> new SupplierDatePickerTableCell();
+    private Callback<TableColumn<Supplier, LocalDate>, TableCell<Supplier, LocalDate>> getSupplierDatePickerCellFactory() {
+        return (TableColumn<Supplier, LocalDate> param) -> new SupplierDatePickerTableCell();
+    }
+
+    private ObservableValue<LocalDate> getDateToLocalDateValueFactory(TableColumn.CellDataFeatures<Supplier, LocalDate> factory) {
+        return new SimpleObjectProperty<LocalDate>(factory.getValue().getCreateTimestamp()
+                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+
     }
 }

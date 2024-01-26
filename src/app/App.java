@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import ui.controller.LoginController;
 import ui.controller.SupplierManagementController;
 
 
@@ -23,10 +24,10 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/supplier_view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/login_view.fxml"));
             Parent root = (Parent) loader.load();
 //            Obtain the Sign In window controller
-            SupplierManagementController controller = SupplierManagementController.class
+            LoginController controller = LoginController.class
                     .cast(loader.getController());
             controller.setStage(stage);
             controller.initStage(root);

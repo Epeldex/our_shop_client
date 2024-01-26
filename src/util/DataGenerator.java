@@ -74,12 +74,14 @@ public class DataGenerator {
     }
 
     private static String buildRandomPhone() {
-        String phone = new String();
-        for (int i = 0; i < 9; i++) {
-            Integer j = new Random().nextInt(9);
-            phone = phone + j.toString();
+        StringBuilder phone = new StringBuilder("+");
+
+        for (int i = 0; i < 11; i++) {
+            Integer j = new Random().nextInt(10); // Cambiado a 10 para incluir el 0
+            phone.append(j.toString());
         }
-        return phone;
+
+        return phone.toString();
     }
 
 }
