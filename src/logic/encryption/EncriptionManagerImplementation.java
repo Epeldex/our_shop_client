@@ -5,7 +5,12 @@
  */
 package logic.encryption;
 
+import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PublicKey;
@@ -31,23 +36,21 @@ public class EncriptionManagerImplementation implements EncriptionManager {
 
     private static UserRESTClient rest = new UserRESTClient();
 
-    private static boolean initializedFlag = false;
-
     private static PublicKey publicKey;
     private static SecretKey symmetricKey;
 
     public EncriptionManagerImplementation() throws InternalServerErrorException {
         publicKey = getPublicKey();
         symmetricKey = getSymmetricKey();
+
     }
 
-    private static PublicKey getPublicKey() throws InternalServerErrorException {
+    private PublicKey getPublicKey() throws InternalServerErrorException {
         try {
-            String publicKeyPath = System.getProperty("user.home") + "\\AppData\\Local\\OurShop\\publicKey.der";
-            FileInputStream fis = new FileInputStream(publicKeyPath);
-            byte[] publicKeyBytes = new byte[fis.available()];
-            fis.read(publicKeyBytes);
-            fis.close();
+            InputStream encodedKeyStream = getClass().getClassLoader().getResourceAsStream("keys/publicKey.der");
+            byte[] encodedKeyBytes = new byte[encodedKeyStream.available()];
+            encodedKeyStream.read(encodedKeyBytes);
+            byte[] publicKeyBytes = Base64.getDecoder().decode(encodedKeyBytes);
 
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
@@ -106,18 +109,15 @@ public class EncriptionManagerImplementation implements EncriptionManager {
     public SecretKey getSymmetricKey() throws InternalServerErrorException {
         try {
             String encodedKey = rest.requestSymmetricKey();
-            String key = extractKey(encodedKey);
-            byte[] bytes = Base64.getDecoder().decode(key);
-            bytes = decryptSymmeticKey(bytes);
-            SecretKey secretKey = new SecretKeySpec(bytes, "AES");
-            return secretKey;
+            byte[] decodedKey = Base64.getDecoder().decode(extractKey(encodedKey));
+            return new SecretKeySpec(decryptSymmetricKey(decodedKey), "AES");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error encrypting message", e.getMessage());
             throw new InternalServerErrorException(e);
         }
     }
 
-    public byte[] decryptSymmeticKey(byte[] key) throws InternalServerErrorException {
+    public byte[] decryptSymmetricKey(byte[] key) throws InternalServerErrorException {
         try {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
@@ -127,7 +127,7 @@ public class EncriptionManagerImplementation implements EncriptionManager {
         }
     }
 
-    private static String extractKey(String xmlString) throws Exception {
+    private String extractKey(String xmlString) throws Exception {
         String regex = "<key>(.*?)</key>";
         Matcher matcher = Pattern.compile(regex).matcher(xmlString);
         return matcher.find() ? matcher.group(1) : null;

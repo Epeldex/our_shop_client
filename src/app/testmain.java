@@ -12,22 +12,19 @@ import transfer.objects.UserType;
 
 /**
  *
- * @author 2dam
+ * @author alexa
+
  */
 public class testmain {
 
     public static void main(String args[]) {
-        try {
-            Admin admin = new Admin();
-            admin.setUsername("Admin");
-            admin.setActive(true);
-            admin.setPassword(EncriptionManagerFactory.getInstance().hashMessage("abcd*1234"));
-            admin.setUserType(UserType.ADMIN);
-
-            AdminManagerFactory.getInstance().createAdmin(admin);
-        } catch (Exception e) {
-
-        }
+        User user = 
+                new User("Shop Admin",
+                        Base64.getEncoder().encodeToString(
+                                EncriptionManagerFactory.getInstance().encryptMessage(
+                                        EncriptionManagerFactory.getInstance().hashMessage("abcd*1234"))));
+        user = new UserRESTClient().signIn(user, User.class);
+        System.out.println(user.getId());
     }
 
 }

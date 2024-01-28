@@ -19,5 +19,4 @@ public interface EncriptionManager {
 
     public String hashMessage(String message) throws InternalServerErrorException;
 
-
 }

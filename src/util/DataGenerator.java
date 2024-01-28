@@ -55,19 +55,21 @@ public class DataGenerator {
         return supplier;
     }
 
+
     public static Product getRandomProduct() throws LogicException {
         Product product = new Product();
+        product.setProductNumber("PN" + new Random().nextInt());
         product.setBrand("brand" + new Random().nextInt(1000));
         product.setCreateTimestamp(new Date(new Random().nextLong() % (new Date(120, 11, 31).getTime() - new Date(90, 0, 1).getTime()) + new Date(90, 0, 1).getTime()));
         product.setModel("model" + new Random().nextInt(1000));
-        product.setOtherInfo(" ");
+        product.setOtherInfo("Additional information for " + product.getProductNumber());
         product.setWeight(new Random().nextDouble() * new Random().nextInt(1000));
         product.setPrice(new Random().nextDouble() * new Random().nextInt(10000));
-        product.setProductNumber("PN" + new Random().nextInt());
 
         List<Supplier> suppliers = SupplierManagerFactory.getInstance().selectAllSuppliers();
         product.setSupplier(suppliers.get(new Random().nextInt(suppliers.size())));
-        product.setTag(TagManagerFactory.getInstance().selectAllTags().get(1));
+        List<Tag> tags = TagManagerFactory.getInstance().selectAllTags();
+        product.setTag(tags.get(new Random().nextInt(tags.size())));
         product.setDescription(product.toString());
 
         return product;
