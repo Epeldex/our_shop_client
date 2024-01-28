@@ -50,8 +50,8 @@
                         <TableColumn fx:id="cDescription" onEditCommit="#handleDescriptionCellEdition" prefWidth="179.199951171875" text="Description" />
                         <TableColumn fx:id="cOtherInfo" onEditCommit="#handleOtherInfoCellEdition" prefWidth="121.5999755859375" text="Other information" />
                         <TableColumn fx:id="cAdditionDate" onEditCommit="#handleAdditionDateCellEdition" prefWidth="114.4000244140625" text="Addition Date" />
-                        <TableColumn fx:id="cSupplier" onEditCommit="#handleSupplierCellEdition" prefWidth="114.39990234375" text="Supplier" />
-                        <TableColumn fx:id="cTag" onEditCommit="#handleTagCellEdition" prefWidth="78.0" text="Tag" />
+                        <TableColumn fx:id="cSupplier" onEditCommit="#handleSupplierCellEdition" prefWidth="93.0" text="Supplier" />
+                        <TableColumn fx:id="cTag" onEditCommit="#handleTagCellEdition" prefWidth="100.0" text="Tag" />
                     </columns>
                     <contextMenu>
                         <ContextMenu fx:id="contextMenu">

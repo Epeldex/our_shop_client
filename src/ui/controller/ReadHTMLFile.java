@@ -2,29 +2,28 @@ package ui.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.nio.charset.StandardCharsets;
+import logic.exceptions.LogicException;
 
 public class ReadHTMLFile {
 
-    public String getMail() {
+    public String getMail() throws LogicException {
         // Specify the path to your HTML file
         try {
+            InputStream mailStream = getClass().getClassLoader().getResourceAsStream("resources/Email.html");
+            byte[] mailBytes = new byte[mailStream.available()];
+            mailStream.read(mailBytes);
 
-            URL url = getClass().getResource("/resources/Email.html");
-            File file = new File(url.getPath());
-
-            return readHtmlFile(file);
-
+            return new String(mailBytes);
         } catch (Exception e) {
-            e.printStackTrace();
-
+            throw new LogicException(e.getMessage(), e);
         }
-        return "";
     }
 
     private String readHtmlFile(File file) throws IOException {

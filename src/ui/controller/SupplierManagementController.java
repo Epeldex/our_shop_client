@@ -150,11 +150,18 @@ public class SupplierManagementController extends GenericController {
         countryColumnId.setOnEditCommit(this::handleCountryCellEdition);
         dateColumnId.setOnEditCommit(this::handleAdditionDateCellEdition);
 
+        MenuItem mitProductManagement = new MenuItem();
+        mitProductManagement.setText("Product Management");
+        mitProductManagement.setMnemonicParsing(false);
+        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                .getMenus().get(0)).getItems().add(mitProductManagement);
+
         // Añadir la columna a la tabla
         // (asumiendo que tu tabla ya está creada y tiene un modelo de datos asociado)
         tvSupplier.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
 
         supplierList = FXCollections.observableArrayList();
+        stage.centerOnScreen();
 
         stage.show();
     }
@@ -420,8 +427,8 @@ public class SupplierManagementController extends GenericController {
             Platform.exit();
         }
     }
-    
-      @FXML
+
+    @FXML
     private void handleAdditionDateCellEdition(CellEditEvent<Supplier, LocalDate> event) {
         try {
             Supplier editedSupplier = event.getRowValue();
@@ -441,10 +448,6 @@ public class SupplierManagementController extends GenericController {
             tvSupplier.refresh();
         }
     }
-
-    
-    
-    
 
     @FXML
     private void handlePhoneCellEdition(CellEditEvent<Supplier, String> event) {

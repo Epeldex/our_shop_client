@@ -27,4 +27,8 @@ public class LogicException extends Exception {
     public LogicException(String msg) {
         super(msg);
     }
+
+    public LogicException(String msg, Exception e) {
+        super(msg, e);
+    }
 }

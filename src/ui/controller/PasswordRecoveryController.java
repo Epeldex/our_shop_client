@@ -1,9 +1,7 @@
 package ui.controller;
 
-
 import java.util.Date;
 import java.util.Properties;
-
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -27,6 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
+import logic.exceptions.LogicException;
 
 public class PasswordRecoveryController extends GenericController {
 
@@ -69,10 +68,11 @@ public class PasswordRecoveryController extends GenericController {
         // Button hovering animations
         {
             recoveryButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue)
+                if (newValue) {
                     new Expand(recoveryButton).play();
-                else
+                } else {
                     new Contract(recoveryButton).play();
+                }
             });
         }
 
@@ -91,14 +91,15 @@ public class PasswordRecoveryController extends GenericController {
     }
 
     public void handleRecovery(ActionEvent event) {
-        sendEmail("danielbarrios2002@gmail.com");
-
+        try {
+            sendEmail("alexander.epelde@gmail.com");
+        } catch (Exception e) {
+           LOGGER.info(e.getMessage());
+        }
     }
 
-    private void sendEmail(String givenEmail) {
+    private void sendEmail(String givenEmail) throws LogicException {
         String emailToSend = new ReadHTMLFile().getMail();
-
-        
 
         //String emailToSend = "html.toString()";
         // port and host configuration
@@ -145,8 +146,8 @@ public class PasswordRecoveryController extends GenericController {
         new Jello(loginButton).play();
         box.requestFocus();
         /**
-         * This little code here animates the fade out of the window before launching
-         * the next one.
+         * This little code here animates the fade out of the window before
+         * launching the next one.
          */
         fadeTransition(box, 1, 0)
                 .setOnFinished((ActionEvent) -> {

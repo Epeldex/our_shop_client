@@ -6,26 +6,26 @@
 <?import javafx.scene.layout.HBox?>
 
 <HBox fx:id="menuBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <MenuBar fx:id="menuBar" prefHeight="26.0" prefWidth="1366.0">
-        <menus>
-            <Menu fx:id="mActions" mnemonicParsing="false" text="Actions">
-              <items>
-                <MenuItem fx:id="mitLogout" mnemonicParsing="false" text="Logout" />
-              </items>
-            </Menu>
-            <Menu fx:id="mHelp" mnemonicParsing="false" text="Help">
-              <items>
-                <MenuItem fx:id="mitAbout" mnemonicParsing="false" text="About" />
-                  <MenuItem fx:id="mitUserManual" mnemonicParsing="false" text="User Manual" />
-              </items>
-            </Menu>
-            <Menu fx:id="mReport" mnemonicParsing="false" text="Report">
-               <items>
-                  <MenuItem fx:id="mitPrintReport" mnemonicParsing="false" text="Print Report" />
-               </items>
-            </Menu>
-        </menus>
-      </MenuBar>
-   </children>
+    <children>
+        <MenuBar fx:id="menuBar" prefHeight="26.0" prefWidth="1366.0">
+            <menus>
+                <Menu fx:id="mActions" mnemonicParsing="false" text="Actions">
+                    <items>
+                        <MenuItem fx:id="mitLogout" mnemonicParsing="false" text="Logout" />
+                    </items>
+                </Menu>
+                <Menu fx:id="mHelp" mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem fx:id="mitAbout" mnemonicParsing="false" text="About" />
+                        <MenuItem fx:id="mitUserManual" mnemonicParsing="false" text="User Manual" />
+                    </items>
+                </Menu>
+                <Menu fx:id="mReport" mnemonicParsing="false" text="Report">
+                    <items>
+                        <MenuItem fx:id="mitPrintReport" mnemonicParsing="false" text="Print Report" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </children>
 </HBox>

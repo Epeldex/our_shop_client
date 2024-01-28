@@ -7,9 +7,13 @@ import java.util.regex.Pattern;
 
 import animatefx.animation.*;
 import app.App;
+import java.io.IOException;
+import java.util.logging.Level;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import logic.exceptions.EmptyFieldException;
 import logic.exceptions.IncorrectFormatException;
 import ui.exceptions.PasswordTooShortException;
@@ -103,7 +107,7 @@ public class GenericController {
         return alert.showAndWait().filter(result -> result == ButtonType.OK).isPresent();
     }
 
-     public void handleLogOutAction(ActionEvent event) {
+    protected void handleLogOutAction(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Log Out");
         alert.setHeaderText(null);
@@ -111,7 +115,17 @@ public class GenericController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // TODO: Mostrar la ventana de inicio de sesión (Log In)
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/login_view.fxml"));
+                Parent root = (Parent) loader.load();
+//            Obtain the Sign In window controller
+                LoginController controller = LoginController.class
+                        .cast(loader.getController());
+                controller.setStage(stage);
+                controller.initStage(root);
+            } catch (IOException ex) {
+                Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -153,7 +167,7 @@ public class GenericController {
             Platform.exit();
         }
     }
- 
+
     /**
      * method that analyses the username
      *
@@ -162,32 +176,33 @@ public class GenericController {
      * @throws IncorrectFormatException if value doesn't match condition.
      */
     protected boolean validateUsername(String username) throws EmptyFieldException, IncorrectFormatException {
-        if (username.isEmpty())
+        if (username.isEmpty()) {
             throw new EmptyFieldException("The username cannot be empty");
+        }
 
-        if (username.contains(" ")) 
+        if (username.contains(" ")) {
             throw new IncorrectFormatException("The username cannot have spaces");
+        }
 
-        if (MAX_LENGTH < username.length())
+        if (MAX_LENGTH < username.length()) {
             throw new IncorrectFormatException("The username is too long");
+        }
 
-        if (username.length() < 3)
+        if (username.length() < 3) {
             throw new IncorrectFormatException("The username must be at least 3 characters long");
-        
+        }
+
         Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[a-zA-Z0-9._-]{3,}$",
                 Pattern.CASE_INSENSITIVE);
 
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(username);
 
-        if (!matcher.matches()) 
+        if (!matcher.matches()) {
             throw new IncorrectFormatException("The username must have only letters, numbers and '-', '/' or '_'");
+        }
 
-        
-
-        
-        return true; 
+        return true;
     }
-    
 
     /**
      * method that analyses the email
@@ -196,23 +211,27 @@ public class GenericController {
      * @return true if value is correct
      * @throws IncorrectFormatException if value doesn't match condition.
      */
-    protected boolean validateEmail(String email) throws EmptyFieldException, IncorrectFormatException{       
-        if (email.isEmpty())
+    protected boolean validateEmail(String email) throws EmptyFieldException, IncorrectFormatException {
+        if (email.isEmpty()) {
             throw new EmptyFieldException("The email cannot be empty");
+        }
 
-        if (email.contains(" ")) 
+        if (email.contains(" ")) {
             throw new IncorrectFormatException("The email cannot have spaces");
+        }
 
-        if (MAX_LENGTH < email.length())
+        if (MAX_LENGTH < email.length()) {
             throw new IncorrectFormatException("The email is too long");
-        
+        }
+
         Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
                 Pattern.CASE_INSENSITIVE);
 
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
 
-        if (!matcher.matches())
+        if (!matcher.matches()) {
             throw new IncorrectFormatException("The email must be an email");
+        }
 
         return true;
     }
@@ -221,37 +240,44 @@ public class GenericController {
      * Validates a password for correct format, length, and emptiness.
      *
      * @param password The password to be validated.
-     * @return 
+     * @return
      */
     protected boolean validatePassword(String password)
             throws IncorrectFormatException, EmptyFieldException {
 
-        if (password.length() < 8)
+        if (password.length() < 8) {
             throw new IncorrectFormatException("The password must be at least 8 characters long.");
+        }
 
-        if (MAX_LENGTH < password.length()) 
+        if (MAX_LENGTH < password.length()) {
             throw new IncorrectFormatException("The password is too long");
-        
-        if (password.length() == 0) 
-                throw new EmptyFieldException("The password cannot be empty");
-            
-       return true;
+        }
+
+        if (password.length() == 0) {
+            throw new EmptyFieldException("The password cannot be empty");
+        }
+
+        return true;
     }
 
-
     protected void validatePersonalInfo(String info, String typeOfInfo) throws EmptyFieldException, IncorrectFormatException {
-        if (info.isEmpty())
+        if (info.isEmpty()) {
             throw new EmptyFieldException(
-                typeOfInfo + " cannot be empty");
-        if (!Character.isUpperCase(info.charAt(0)))
+                    typeOfInfo + " cannot be empty");
+        }
+        if (!Character.isUpperCase(info.charAt(0))) {
             throw new IncorrectFormatException(
-                typeOfInfo + " must start with capital letters");
+                    typeOfInfo + " must start with capital letters");
+        }
 
-        if (info.contains(" "))
-            if (info.indexOf(" ") + 1 != info.length())
-                if (!Character.isUpperCase(info.charAt(info.indexOf(" ") + 1)))
+        if (info.contains(" ")) {
+            if (info.indexOf(" ") + 1 != info.length()) {
+                if (!Character.isUpperCase(info.charAt(info.indexOf(" ") + 1))) {
                     throw new IncorrectFormatException(
-                        "Every word must start with capital letters");
+                            "Every word must start with capital letters");
+                }
+            }
+        }
     }
 
     /**
@@ -260,7 +286,7 @@ public class GenericController {
     protected void handleCloseRequest(WindowEvent event) {
         event.consume();
         if (event.getEventType().equals(WindowEvent.WINDOW_CLOSE_REQUEST)) {
-            stage.close();
+            showExitDialog();
         }
     }
 
@@ -270,31 +296,32 @@ public class GenericController {
      */
     /**
      * This method slides smoothly the box in.
+     *
      * @param box
      * @param dir if dir is 1, goes up, if 0 down. otherwise up.
      */
     protected void slideBoxIn(Pane box, int dir) {
         box.setOpacity(0);
         new FadeIn(box).play();
-        if (dir == 0)
+        if (dir == 0) {
             new SlideInUp(box).play();
-        else
+        } else {
             new SlideInDown(box).play();
+        }
         box.setVisible(true);
     }
 
     /**
-     * The following code animates a fading animation.
-     * If parameters are 1 to 0, animates a fade out.
-     * If there are 0 to 1, animates a fade in.
-     * Use to returned FadeTransition object to launch the
-     * next window with the method setOnFinished from
-     * {@link FadeTransition}
+     * The following code animates a fading animation. If parameters are 1 to 0,
+     * animates a fade out. If there are 0 to 1, animates a fade in. Use to
+     * returned FadeTransition object to launch the next window with the method
+     * setOnFinished from {@link FadeTransition}
+     *
      * @param node node to fade out or in
      * @param from current status
      * @param to next status
-     * @return a FadeTransition object. It has to be returned in order
-     * to use it to launch the following window.
+     * @return a FadeTransition object. It has to be returned in order to use it
+     * to launch the following window.
      */
     protected FadeTransition fadeTransition(Pane node, int from, int to) {
         FadeTransition ft = new FadeTransition();
@@ -306,18 +333,18 @@ public class GenericController {
         return ft;
     }
 
-
     protected void showErrorLabel(Text errorLabel, ImageView errorImage, String message) {
         if (!errorLabel.isVisible()) {
             errorLabel.setText(message);
             new FadeIn(errorLabel).play();
 
             shakeErrors(errorLabel, errorImage);
-            
+
             errorLabel.setVisible(true);
             errorImage.setVisible(true);
-        } else
+        } else {
             errorLabel.setText(message);
+        }
     }
 
     protected void shakeErrors(Text errorLabel, ImageView errorImage) {
@@ -326,10 +353,12 @@ public class GenericController {
 
     /**
      * Method that shows the password (hide Password Field and show Text Field)
-     * @param visible if true, sets the password text field visible and the field non-visible. If not, the oposite.
+     *
+     * @param visible if true, sets the password text field visible and the
+     * field non-visible. If not, the oposite.
      */
-    protected void showPassword(TextInputControl passwordTextField, 
-    TextInputControl passwordField, ImageView showPasswordImage, boolean visible) {
+    protected void showPassword(TextInputControl passwordTextField,
+            TextInputControl passwordField, ImageView showPasswordImage, boolean visible) {
         if (visible) {
             passwordField.setVisible(false);
             passwordTextField.setVisible(true);

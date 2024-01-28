@@ -5,10 +5,10 @@
  */
 package app;
 
+import java.util.Base64;
 import logic.encryption.EncriptionManagerFactory;
-import logic.factories.AdminManagerFactory;
-import transfer.objects.Admin;
-import transfer.objects.UserType;
+import rest.UserRESTClient;
+import transfer.objects.User;
 
 /**
  *

@@ -1,6 +1,5 @@
 package ui.controller;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,20 +12,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import logic.encryption.EncriptionManager;
 import logic.encryption.EncriptionManagerFactory;
 import logic.exceptions.LogicException;
 import logic.factories.UserManagerFactory;
@@ -111,15 +106,6 @@ public class LoginController extends GenericController {
         passwordField.textProperty().addListener(this::handlePassword);
         passwordTextField.textProperty().addListener(this::handlePassword);
 
-        loginButton.addEventHandler(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
-            // Adds an event handler that records every
-            // time the escape key is pressed
-            if (KeyCode.ENTER == event.getCode()) {
-                loginButton.requestFocus();
-                handleLogin(null);
-            }
-
-        });
         // Button listeners.
         showPasswordButton.setOnAction(this::handleShowPassword);
         forgotPasswordButton.setOnAction(this::handleRecoverPassword);
@@ -138,6 +124,7 @@ public class LoginController extends GenericController {
         }
 
         showPasswordButton.setFocusTraversable(false);
+        loginButton.setDefaultButton(true);
 
         // Close request reaction.
         // TODO: + esc 
@@ -243,10 +230,10 @@ public class LoginController extends GenericController {
                     EncriptionManagerFactory.getInstance().hashMessage(passwordField.getText())));
             if (user.getUserType() == UserType.ADMIN) {
                 try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/supplier_view.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/product_view.fxml"));
                     Parent root = (Parent) loader.load();
                     // Obtain the Sign In window controller
-                    SupplierManagementController controller = SupplierManagementController.class
+                    ProductViewController controller = ProductViewController.class
                             .cast(loader.getController());
                     controller.setStage(stage);
                     controller.initStage(root);

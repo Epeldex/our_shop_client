@@ -5,6 +5,8 @@
  */
 package ui.controller;
 
+import app.App;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,6 +15,7 @@ import ui.controls.EditableComboBoxTableCell;
 import ui.controls.ProductDatePickerTableCell;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -22,8 +25,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -193,13 +199,7 @@ public class ProductViewController extends GenericController {
      * HBox for holding menu components.
      */
     @FXML
-    protected HBox menuBox;
-
-    /**
-     * MenuItem for logging out.
-     */
-    @FXML
-    protected MenuItem mitLogout;
+    private HBox menuBox;
 
     /**
      * ObservableList to hold products for the TableView.
@@ -268,19 +268,30 @@ public class ProductViewController extends GenericController {
         productList = FXCollections.observableArrayList();
         tvProduct.setItems(productList);
 
+        //Add a menu item to the actions Menu
+        MenuItem mitSupplierManagement = new MenuItem();
+        mitSupplierManagement.setText("Supplier Management");
+        mitSupplierManagement.setMnemonicParsing(false);
+        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                .getMenus().get(0)).getItems().add(mitSupplierManagement);
+
         // Set actions for the menu bar's menus' items
         Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(0)).getItems().get(0).setOnAction(super::handleLogOutAction);
+                .getMenus().get(0)).getItems().get(0).setOnAction(super::handleLogOutAction); //Logout menu item
         Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(1)).getItems().get(0).setOnAction(this::handleAboutAction);
+                .getMenus().get(0)).getItems().get(1).setOnAction(this::handleSupplierMenuItemAction); //Supplier Management menu item
         Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(1)).getItems().get(1).setOnAction(this::handleHelpAction);
+                .getMenus().get(1)).getItems().get(0).setOnAction(this::handleAboutAction); //About menu item
         Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(2)).getItems().get(0).setOnAction(this::handlePrintReportAction);
+                .getMenus().get(1)).getItems().get(1).setOnAction(this::handleHelpAction); //Help menu item, user manual
+        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                .getMenus().get(2)).getItems().get(0).setOnAction(this::handlePrintReportAction); // Print report menu item, prints report
 
+        btnEdit.setVisible(false);
+        miEdit.setVisible(false);
         // Set close request handler for the stage
         stage.setOnCloseRequest(super::handleCloseRequest);
-
+        stage.centerOnScreen();
         // Show the stage
         stage.show();
     }
@@ -432,8 +443,9 @@ public class ProductViewController extends GenericController {
             //Check if what the user has introduced is either empty or not an available supplier
             //see EditableComboBoxTableCell fromString() implementation
             if (supplier.isEmpty()) {
-                if (showConfirmationDialog("The supplier you have selected does not exist, do you want to add a new one?"));
-                launchSupplierWindow();
+                if (showConfirmationDialog("The supplier you have selected does not exist, do you want to add a new one?")) {
+                    launchSupplierWindow();
+                }
             } else {
                 Product editedProduct = event.getRowValue();
                 editedProduct.setSupplier(supplier);
@@ -780,6 +792,18 @@ public class ProductViewController extends GenericController {
         return (TableColumn<Product, Supplier> param) -> new EditableComboBoxTableCell(supplierList);
     }
 
+    private ObservableValue<LocalDate> getDateToLocalDateValueFactory(TableColumn.CellDataFeatures<Product, LocalDate> factory) {
+        return new SimpleObjectProperty<LocalDate>(factory.getValue().getCreateTimestamp()
+                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+
+    }
+
+    private void handleSupplierMenuItemAction(ActionEvent event) {
+        if (showConfirmationDialog("Do you want to open the Supplier Management window?")) {
+            launchSupplierWindow();
+        }
+    }
+
     /**
      * Handles the action event for the "Help" menu item. Displays the window
      * tutorial.
@@ -797,7 +821,12 @@ public class ProductViewController extends GenericController {
      * @param event The ActionEvent object for the event.
      */
     private void handleAboutAction(ActionEvent event) {
-        // Show about dialog
+        Alert aboutAlert = new Alert(AlertType.INFORMATION);
+        aboutAlert.setTitle("About");
+        aboutAlert.setHeaderText("Product Management System");
+        aboutAlert.setContentText("This application is designed for managing products efficiently.\nVersion: 1.0.0\nAuthor: Alexander Epelde");
+
+        aboutAlert.showAndWait();
     }
 
     /**
@@ -814,13 +843,14 @@ public class ProductViewController extends GenericController {
      * Launches the supplier window. TODO: Implement this method.
      */
     private void launchSupplierWindow() {
-        // TODO
-    }
-
-    private ObservableValue<LocalDate> getDateToLocalDateValueFactory(TableColumn.CellDataFeatures<Product, LocalDate> factory) {
-        return new SimpleObjectProperty<LocalDate>(factory.getValue().getCreateTimestamp()
-                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/supplier_view.fxml"));
+            Parent root = (Parent) loader.load();
+            SupplierManagementController.class.cast(loader.getController()).setStage(stage);
+            SupplierManagementController.class.cast(loader.getController()).initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

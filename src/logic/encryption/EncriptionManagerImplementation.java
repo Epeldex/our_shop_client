@@ -40,9 +40,12 @@ public class EncriptionManagerImplementation implements EncriptionManager {
     private static SecretKey symmetricKey;
 
     public EncriptionManagerImplementation() throws InternalServerErrorException {
-        publicKey = getPublicKey();
-        symmetricKey = getSymmetricKey();
-
+        if (publicKey == null) {
+            publicKey = getPublicKey();
+        }
+        if (symmetricKey == null) {
+            symmetricKey = getSymmetricKey();
+        }
     }
 
     private PublicKey getPublicKey() throws InternalServerErrorException {
