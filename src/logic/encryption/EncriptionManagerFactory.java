@@ -4,9 +4,6 @@
  * and open the template in the editor.
  */
 package logic.encryption;
-
-import javax.ws.rs.InternalServerErrorException;
-
 /**
  *
  * @author alexa
