@@ -45,6 +45,17 @@ public class DataGenerator {
         return customers;
     }
 
+    public static Supplier getRandomSupplier() {
+        Supplier supplier = new Supplier();
+        supplier.setName("supplier" + new Random().nextInt(1000));
+        supplier.setPhone(buildRandomPhone());
+        supplier.setCountry("country" + new Random().nextInt(100));
+        supplier.setZip(new Random().nextInt(99999));
+        supplier.setCreateTimestamp(new Date());
+        return supplier;
+    }
+
+
     public static Product getRandomProduct() throws LogicException {
         Product product = new Product();
         product.setProductNumber("PN" + new Random().nextInt());
@@ -65,12 +76,14 @@ public class DataGenerator {
     }
 
     private static String buildRandomPhone() {
-        String phone = new String();
-        for (int i = 0; i < 9; i++) {
-            Integer j = new Random().nextInt(9);
-            phone = phone + j.toString();
+        StringBuilder phone = new StringBuilder("+");
+
+        for (int i = 0; i < 11; i++) {
+            Integer j = new Random().nextInt(10); // Cambiado a 10 para incluir el 0
+            phone.append(j.toString());
         }
-        return phone;
+
+        return phone.toString();
     }
 
 }

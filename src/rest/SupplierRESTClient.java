@@ -10,14 +10,6 @@ import javax.ws.rs.core.MediaType;
 import transfer.objects.Product;
 
 /**
- * Jersey REST client generated for REST resource: SupplierREST [suppliers]<br>
- * USAGE:
- * <pre>
- *        SupplierRESTClient client = new SupplierRESTClient();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
- * </pre>
  *
  * This class provides a Jersey REST client for interacting with a RESTful web
  * service that deals with supplier entities. It extends GenericRESTClient,

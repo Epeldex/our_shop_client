@@ -5,14 +5,15 @@
  */
 package app;
 
-import java.util.Base64;
 import logic.encryption.EncriptionManagerFactory;
-import rest.UserRESTClient;
-import transfer.objects.User;
+import logic.factories.AdminManagerFactory;
+import transfer.objects.Admin;
+import transfer.objects.UserType;
 
 /**
  *
  * @author alexa
+
  */
 public class testmain {
 

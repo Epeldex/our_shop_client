@@ -26,6 +26,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import logic.encryption.EncriptionManager;
+import logic.encryption.EncriptionManagerFactory;
+import logic.exceptions.LogicException;
+import logic.factories.UserManagerFactory;
+import transfer.objects.User;
+import transfer.objects.UserType;
 
 public class LoginController extends GenericController {
 
@@ -84,7 +90,7 @@ public class LoginController extends GenericController {
         stage.setMaximized(false);
         stage.setTitle("Login");
         stage.getIcons().add(logo);
-       
+
         // Hide the clear view of the password.
         passwordTextField.setVisible(false);
 
@@ -105,8 +111,7 @@ public class LoginController extends GenericController {
         passwordField.textProperty().addListener(this::handlePassword);
         passwordTextField.textProperty().addListener(this::handlePassword);
 
-        // In case of pressing the enter key
-        stage.addEventHandler(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
+        loginButton.addEventHandler(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
             // Adds an event handler that records every
             // time the escape key is pressed
             if (KeyCode.ENTER == event.getCode()) {
@@ -115,8 +120,6 @@ public class LoginController extends GenericController {
             }
 
         });
-
-
         // Button listeners.
         showPasswordButton.setOnAction(this::handleShowPassword);
         forgotPasswordButton.setOnAction(this::handleRecoverPassword);
@@ -125,20 +128,20 @@ public class LoginController extends GenericController {
 
         // Button hovering animations
         {
-            loginButton.hoverProperty().addListener((observable, oldValue, newValue) -> { 
-                if (newValue)
+            loginButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
                     new Expand(loginButton).play();
-                else
+                } else {
                     new Contract(loginButton).play();
+                }
             });
         }
 
         showPasswordButton.setFocusTraversable(false);
-        
+
         // Close request reaction.
         // TODO: + esc 
         stage.setOnCloseRequest(this::handleCloseRequest);
-
 
         stage.show();
 
@@ -157,19 +160,19 @@ public class LoginController extends GenericController {
      * @param newValue new username in field.
      */
     protected void handleUsername(ObservableValue observable,
-        String oldValue, String newValue) {
-            try {
-                if (triedToLogin) {
-                    validateUsername(newValue);
+            String oldValue, String newValue) {
+        try {
+            if (triedToLogin) {
+                validateUsername(newValue);
 
-                    // If everything goes alright, hide error.
-                    usernameErrorText.setVisible(false);
-                    usernameErrorImage.setVisible(false);
-                }
-                
-            } catch (EmptyFieldException | IncorrectFormatException e) {
-                showErrorLabel(usernameErrorText, usernameErrorImage, e.getMessage());
+                // If everything goes alright, hide error.
+                usernameErrorText.setVisible(false);
+                usernameErrorImage.setVisible(false);
             }
+
+        } catch (EmptyFieldException | IncorrectFormatException e) {
+            showErrorLabel(usernameErrorText, usernameErrorImage, e.getMessage());
+        }
     }
 
     /**
@@ -183,15 +186,16 @@ public class LoginController extends GenericController {
             String oldValue,
             String newValue) {
 
-        if (newValue.equals(passwordTextField.getText()))
-                passwordField.setText(newValue);
-        else
-                passwordTextField.setText(newValue);
-                
+        if (newValue.equals(passwordTextField.getText())) {
+            passwordField.setText(newValue);
+        } else {
+            passwordTextField.setText(newValue);
+        }
+
         try {
             if (triedToLogin) {
                 validatePassword(newValue);
-                
+
                 // If everything goes alright, hide errors.
                 passwordErrorText.setVisible(false);
                 passwordErrorImage.setVisible(false);
@@ -199,7 +203,7 @@ public class LoginController extends GenericController {
 
         } catch (IncorrectFormatException | EmptyFieldException e) {
             showErrorLabel(passwordErrorText, passwordErrorImage, e.getMessage());
-        } 
+        }
     }
 
     /**
@@ -212,38 +216,58 @@ public class LoginController extends GenericController {
         if (!passwordTextField.isVisible()) {
             showPassword(passwordTextField, passwordField, showPasswordImage, true);
             passwordTextField.requestFocus();
-        }
-            
-        else {
+        } else {
             showPassword(passwordTextField, passwordField, showPasswordImage, false);
             passwordField.requestFocus();
         }
-            
 
-        
     }
 
     /*
      * LAUNCHING OTHER WINDOWS
      */
-
     private void handleLogin(ActionEvent event) {
         triedToLogin = true;
         new RubberBand(loginButton).play();
-        
+
         handleUsername(null, null, usernameTextField.getText());
-        
-        if (passwordField.isVisible())
-        handlePassword(null, null, passwordField.getText());
-        else
-        handlePassword(null, null, passwordTextField.getText());
 
+        if (passwordField.isVisible()) {
+            handlePassword(null, null, passwordField.getText());
+        } else {
+            handlePassword(null, null, passwordTextField.getText());
+        }
 
+        try {
+            User user = UserManagerFactory.getInstance().signIn(new User(usernameTextField.getText(),
+                    EncriptionManagerFactory.getInstance().hashMessage(passwordField.getText())));
+            if (user.getUserType() == UserType.ADMIN) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/supplier_view.fxml"));
+                    Parent root = (Parent) loader.load();
+                    // Obtain the Sign In window controller
+                    SupplierManagementController controller = SupplierManagementController.class
+                            .cast(loader.getController());
+                    controller.setStage(stage);
+                    controller.initStage(root);
+
+                } catch (Exception ex) {
+                    /*
+                Logger.getLogger(App.class
+                        .getName()).log(Level.SEVERE, null, ex);
+                     */
+                }
+
+            } else {
+                // XD
+            }
+        } catch (LogicException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         shakeErrors(usernameErrorText, usernameErrorImage);
 
         // TODO: launch the main window.
-     }
-
+    }
 
     /**
      * Handle the case of pressing the SignUp button.
@@ -254,63 +278,59 @@ public class LoginController extends GenericController {
         new Jello(signUpButton).play();
         box.requestFocus();
         /**
-         * This little code here animates the fade out of the window before launching the next one.
+         * This little code here animates the fade out of the window before
+         * launching the next one.
          */
         fadeTransition(box, 1, 0)
-        .setOnFinished((ActionEvent) -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/sign_up_view.fxml"));
-                Parent root = (Parent) loader.load();
-                // Obtain the Sign In window controller
-                SignUpController controller = SignUpController.class
-                    .cast(loader.getController());
-                controller.setStage(stage);
-                controller.initStage(root);
-    
-            } catch (Exception ex) {
-                /*
+                .setOnFinished((ActionEvent) -> {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/sign_up_view.fxml"));
+                        Parent root = (Parent) loader.load();
+                        // Obtain the Sign In window controller
+                        SignUpController controller = SignUpController.class
+                                .cast(loader.getController());
+                        controller.setStage(stage);
+                        controller.initStage(root);
+
+                    } catch (Exception ex) {
+                        /*
                 Logger.getLogger(App.class
                         .getName()).log(Level.SEVERE, null, ex);
-                 */
-            }
-        });
+                         */
+                    }
+                });
     }
 
     /**
      * Launch password recovery window.
+     *
      * @param event
      */
     private void handleRecoverPassword(ActionEvent event) {
         box.requestFocus();
         /**
-         * This little code here animates the fade out of the window before launching the next one.
+         * This little code here animates the fade out of the window before
+         * launching the next one.
          */
         fadeTransition(box, 1, 0)
-        .setOnFinished((ActionEvent) -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/password_recovery_view.fxml"));
-                Parent root = (Parent) loader.load();
-                // Obtain the Sign In window controller
-                PasswordRecoveryController controller = PasswordRecoveryController.class
-                    .cast(loader.getController());
-                controller.setStage(stage);
-                controller.initStage(root);
-    
-            } catch (Exception ex) {
-                
-                Logger.getLogger(LoginController.class
-                        .getName()).log(Level.SEVERE, null, ex);
-                 
-            }
-        });
+                .setOnFinished((ActionEvent) -> {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/password_recovery_view.fxml"));
+                        Parent root = (Parent) loader.load();
+                        // Obtain the Sign In window controller
+                        PasswordRecoveryController controller = PasswordRecoveryController.class
+                                .cast(loader.getController());
+                        controller.setStage(stage);
+                        controller.initStage(root);
 
-            
-            
-           
-            
+                    } catch (Exception ex) {
 
+                        Logger.getLogger(LoginController.class
+                                .getName()).log(Level.SEVERE, null, ex);
 
+                    }
+                });
 
     }
-    
+
 }

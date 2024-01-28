@@ -6,20 +6,22 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import transfer.objects.Product;
+import transfer.objects.Supplier;
 import ui.controller.LocalDateStringConverter;
 
-public class DatePickerTableCell extends TableCell<Product, LocalDate> {
+public class SupplierDatePickerTableCell extends TableCell<Supplier, LocalDate> {
 
     private DatePicker datePicker;
     private String oldValue;
     private static DateFormat dateFormat;
     private static DateTimeFormatter dateFormatter;
 
-    public DatePickerTableCell() {
+    public SupplierDatePickerTableCell() {
         dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
         dateFormatter = DateTimeFormatter.ofPattern(SimpleDateFormat.class.cast(dateFormat).toPattern());
 
@@ -71,3 +73,4 @@ public class DatePickerTableCell extends TableCell<Product, LocalDate> {
     }
 
 }
+

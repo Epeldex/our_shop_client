@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ui.controller.LoginController;
+import ui.controller.SupplierManagementController;
+
 
 public class App extends Application {
 
@@ -22,13 +24,14 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/product_view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/login_view.fxml"));
             Parent root = (Parent) loader.load();
-            ProductViewController controller = ProductViewController.class
+//            Obtain the Sign In window controller
+            LoginController controller = LoginController.class
                     .cast(loader.getController());
             controller.setStage(stage);
             controller.initStage(root);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

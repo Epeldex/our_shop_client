@@ -167,6 +167,7 @@ public class UserManagerImplementation implements UserManager {
     public User signIn(User user) throws LogicException {
         try {
             LOGGER.info("UserManager: Authenticating user with username " + user.getUsername());
+            user.setPassword(Base64.getEncoder().encodeToString(em.encryptMessage(user.getPassword())));
             return webClient.signIn(user, User.class);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception authenticating user, {0}", ex.getMessage());

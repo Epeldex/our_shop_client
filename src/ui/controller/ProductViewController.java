@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import ui.controls.EditableComboBoxTableCell;
-import ui.controls.DatePickerTableCell;
+import ui.controls.ProductDatePickerTableCell;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -329,6 +329,7 @@ public class ProductViewController extends GenericController {
             showErrorAlert("ERROR", "Error listing products", ex.getMessage());
         } finally {
             tvProduct.getSelectionModel().clearSelection();
+            tvProduct.refresh();
         }
     }
 
@@ -390,6 +391,8 @@ public class ProductViewController extends GenericController {
         } catch (Exception e) {
             // Show an error alert if an exception occurs during editing
             showErrorAlert("Error Editing Product", "An error occurred while editing a Product.", e.getMessage());
+        } finally {
+            tvProduct.refresh();
         }
     }
 
@@ -758,13 +761,13 @@ public class ProductViewController extends GenericController {
     }
 
     /**
-     * Returns a Callback for creating a DatePickerTableCell for the "Addition
-     * Date" column.
+     * Returns a Callback for creating a ProductDatePickerTableCell for the
+     * "Addition Date" column.
      *
-     * @return A Callback for creating a DatePickerTableCell.
+     * @return A Callback for creating a ProductDatePickerTableCell.
      */
     private Callback<TableColumn<Product, LocalDate>, TableCell<Product, LocalDate>> getDatePickerCellFactory() {
-        return (TableColumn<Product, LocalDate> param) -> new DatePickerTableCell();
+        return (TableColumn<Product, LocalDate> param) -> new ProductDatePickerTableCell();
     }
 
     /**

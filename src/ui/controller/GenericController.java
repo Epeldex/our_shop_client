@@ -115,7 +115,31 @@ public class GenericController {
         }
     }
 
-    
+    /**
+     * Checks if the input string is too long.
+     *
+     * @param input The input string to be checked for length.
+     * @throws IncorrectFormatException If the input string is too long, this
+     */
+    protected boolean isTooLong(String input) throws IncorrectFormatException {
+        if (input.length() > 255) {
+            throw new IncorrectFormatException();
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the provided password is too short.
+     *
+     * @param password The password to be checked for its length.
+     * @throws PasswordTooShortException If the password is too short (less than
+     */
+    protected boolean isTooShort(String password) throws PasswordTooShortException {
+        if (password.length() < 8) {
+            throw new PasswordTooShortException();
+        }
+        return false;
+    }
 
     /**
      * action that will be executed when the user tries to close the
@@ -197,12 +221,7 @@ public class GenericController {
      * Validates a password for correct format, length, and emptiness.
      *
      * @param password The password to be validated.
-     * @throws IncorrectFormatException If the password format is incorrect,
-     * this exception is thrown.
-     * @throws PasswordTooShortException If the password is too short, this
-     * exception is thrown.
-     * @throws EmptyFieldException If the password is empty, this exception is
-     * thrown. =======
+     * @return 
      */
     protected boolean validatePassword(String password)
             throws IncorrectFormatException, EmptyFieldException {
