@@ -1,6 +1,5 @@
 package app;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,9 +21,9 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/product_view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/login_view.fxml"));
             Parent root = (Parent) loader.load();
-            ProductViewController controller = ProductViewController.class
+            LoginController controller = LoginController.class
                     .cast(loader.getController());
             controller.setStage(stage);
             controller.initStage(root);
