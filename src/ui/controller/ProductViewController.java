@@ -11,10 +11,13 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Collection;
 import ui.controls.EditableComboBoxTableCell;
 import ui.controls.ProductDatePickerTableCell;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.Observable;
@@ -51,6 +54,13 @@ import logic.factories.ProductManagerFactory;
 import logic.factories.SupplierManagerFactory;
 import logic.factories.TagManagerFactory;
 import logic.interfaces.ProductManager;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 import transfer.objects.Product;
 import transfer.objects.Supplier;
 import transfer.objects.Tag;
@@ -836,7 +846,16 @@ public class ProductViewController extends GenericController {
      * @param event The ActionEvent object for the event.
      */
     private void handlePrintReportAction(ActionEvent event) {
-        // Print report
+        try {
+            JasperReport report = JasperCompileManager.compileReport("src/ui/report/ProductReport.jrxml");
+            JRBeanCollectionDataSource items = new JRBeanCollectionDataSource((Collection<Product>) tvProduct.getItems());
+            Map<String, Object> parameters = new HashMap<>();
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, items);
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint);
+            jasperViewer.setVisible(true);
+        } catch (JRException ex) {
+            Logger.getLogger(ProductViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

@@ -9,9 +9,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import animatefx.animation.Jello;
-import animatefx.animation.Swing;
 import animatefx.animation.partial.Contract;
 import animatefx.animation.partial.Expand;
 import javafx.beans.value.ObservableValue;
@@ -23,8 +21,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
-import javafx.stage.StageStyle;
 import logic.exceptions.LogicException;
 
 public class PasswordRecoveryController extends GenericController {
@@ -94,7 +90,7 @@ public class PasswordRecoveryController extends GenericController {
         try {
             sendEmail("alexander.epelde@gmail.com");
         } catch (Exception e) {
-           LOGGER.info(e.getMessage());
+            LOGGER.info(e.getMessage());
         }
     }
 
