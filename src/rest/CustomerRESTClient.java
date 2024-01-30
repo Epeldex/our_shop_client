@@ -94,4 +94,21 @@ public class CustomerRESTClient extends GenericRESTClient {
         resource = resource.path(MessageFormat.format("{0}", new Object[]{userId}));
         return resource.request(MediaType.APPLICATION_XML).get(responseType);
     }
+
+    /**
+     * Manages the password recovery management
+     *
+     * @param responseType The Class object of the returning instance.
+     * @param email The email of the customer entity's password to reset.
+     * @return The object containing the data.
+     * @throws WebApplicationException If there is an error while processing.
+     * The error is wrapped in an HTTP error response.
+     */
+    public <T> T resetPassword(Class<T> responseType, String email) throws WebApplicationException {
+        WebTarget resource = webTarget;
+
+        resource = resource.path(MessageFormat.format("customer/{0}", new Object[]{email}));
+        return resource.request(MediaType.APPLICATION_XML).get(responseType);
+
+    }
 }
