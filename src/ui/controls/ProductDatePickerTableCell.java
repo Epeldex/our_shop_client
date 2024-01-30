@@ -32,7 +32,7 @@ public class ProductDatePickerTableCell extends TableCell<Product, LocalDate> {
             super.startEdit();
             datePicker = new DatePicker();
             datePicker.setConverter(new LocalDateStringConverter(dateFormat));
-            oldValue = datePicker.getEditor().getText();
+            oldValue = getText();
 
             // Set prompt text with an example date
             datePicker.setPromptText(SimpleDateFormat.class.cast(dateFormat).toPattern());
