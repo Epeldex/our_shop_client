@@ -3,8 +3,7 @@ package ui.controller;
 import animatefx.animation.Jello;
 import animatefx.animation.partial.Contract;
 import animatefx.animation.partial.Expand;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Base64;
 
 import javax.ws.rs.core.GenericType;
 
@@ -17,8 +16,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import logic.exceptions.EmptyFieldException;
-import logic.exceptions.IncorrectFormatException;
+import logic.business.EmailManager;
+import logic.encryption.EncriptionManagerFactory;
 import rest.CustomerRESTClient;
 import transfer.objects.Customer;
 
@@ -88,8 +87,13 @@ public class PasswordRecoveryController extends GenericController {
     private void handleRecovery(ActionEvent event) {
         try {
             if (validateEmail(emailTextField.getText())) {
-                new CustomerRESTClient().resetPassword(new GenericType<Customer>() {
+                Customer customer = new CustomerRESTClient().resetPassword(
+                        new GenericType<Customer>() {
                 }, emailTextField.getText());
+                EmailManager em = new EmailManager(customer.getEmail(),
+                        Base64.getEncoder().encodeToString(
+                                EncriptionManagerFactory.getInstance().decryptMessage(customer.getPassword())));
+                em.start();
             }
         } catch (Exception e) {
             e.printStackTrace();

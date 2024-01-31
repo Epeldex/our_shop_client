@@ -79,7 +79,7 @@ public class EncriptionManagerImplementation implements EncriptionManager {
     @Override
     public byte[] decryptMessage(String message) throws InternalServerErrorException {
         try {
-            LOGGER.info("Decrypting " + message);
+            LOGGER.info("Decrypting message");
             Cipher cipher = Cipher.getInstance("AES"); // No Bouncy Castle provider
             cipher.init(Cipher.DECRYPT_MODE, symmetricKey);
             return cipher.doFinal(Base64.getDecoder().decode(message));
