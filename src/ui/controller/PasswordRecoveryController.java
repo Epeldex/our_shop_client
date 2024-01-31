@@ -1,17 +1,12 @@
 package ui.controller;
 
-import java.util.Date;
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import animatefx.animation.Jello;
 import animatefx.animation.partial.Contract;
 import animatefx.animation.partial.Expand;
+import java.util.Base64;
+
+import javax.ws.rs.core.GenericType;
+
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,7 +16,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import logic.exceptions.LogicException;
+import logic.business.EmailManager;
+import logic.encryption.EncriptionManagerFactory;
+import rest.CustomerRESTClient;
+import transfer.objects.Customer;
 
 public class PasswordRecoveryController extends GenericController {
 
@@ -86,56 +84,21 @@ public class PasswordRecoveryController extends GenericController {
 
     }
 
-    public void handleRecovery(ActionEvent event) {
+    private void handleRecovery(ActionEvent event) {
         try {
-            sendEmail("alexander.epelde@gmail.com");
+            if (validateEmail(emailTextField.getText())) {
+                Customer customer = new CustomerRESTClient().resetPassword(
+                        new GenericType<Customer>() {
+                }, emailTextField.getText());
+                EmailManager em = new EmailManager(customer.getEmail(),
+                        Base64.getEncoder().encodeToString(
+                                EncriptionManagerFactory.getInstance().decryptMessage(customer.getPassword())));
+                em.start();
+            }
         } catch (Exception e) {
-            LOGGER.info(e.getMessage());
+            e.printStackTrace();
         }
-    }
 
-    private void sendEmail(String givenEmail) throws LogicException {
-        String emailToSend = new ReadHTMLFile().getMail();
-
-        //String emailToSend = "html.toString()";
-        // port and host configuration
-        final String ZOHO_HOST = "smtp.zoho.eu";
-        final String TLS_PORT = "897";
-        // senders credentials
-        final String SENDER_USERNAME = "bmoncalvillo@zohomail.eu";
-        final String SENDER_PASSWORD = "Du75zJLqbaZ1";
-
-        // protocol properties
-        Properties props = System.getProperties();
-        props.setProperty("mail.smtps.host", ZOHO_HOST); // change to GMAIL_HOST for gmail // for gmail
-        props.setProperty("mail.smtp.port", TLS_PORT);
-        props.setProperty("mail.smtp.starttls.enable", "true");
-        props.setProperty("mail.smtps.auth", "true");
-
-        // close connection upon quit being sent
-        props.put("mail.smtps.quitwait", "false");
-
-        Session session = Session.getInstance(props, null);
-
-        try {
-            // create the message
-            final MimeMessage msg = new MimeMessage(session);
-
-            // set recipients and content
-            msg.setFrom(new InternetAddress(SENDER_USERNAME));
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(givenEmail, false));
-            msg.setSubject("Demo");
-            msg.setText(emailToSend, "utf-8", "html");
-            msg.setSentDate(new Date());
-
-            // send the mail
-            Transport transport = session.getTransport("smtps");
-            // send the mail
-            transport.connect(ZOHO_HOST, SENDER_USERNAME, SENDER_PASSWORD);
-            transport.sendMessage(msg, msg.getAllRecipients());
-
-        } catch (MessagingException e) {
-        }
     }
 
     public void handleLogin(ActionEvent event) {
