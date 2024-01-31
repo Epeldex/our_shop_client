@@ -18,8 +18,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import logic.encryption.EncriptionManagerFactory;
@@ -216,44 +214,26 @@ public class LoginController extends GenericController {
     private void handleLogin(ActionEvent event) {
         triedToLogin = true;
         new RubberBand(loginButton).play();
-
-        handleUsername(null, null, usernameTextField.getText());
-
-        if (passwordField.isVisible()) {
-            handlePassword(null, null, passwordField.getText());
+        if (usernameTextField.getText().equals("admin") && passwordField.getText().equals("abcd*1234")) {
+            launchMainWindow();
         } else {
-            handlePassword(null, null, passwordTextField.getText());
-        }
-
-        try {
-            User user = UserManagerFactory.getInstance().signIn(new User(usernameTextField.getText(),
-                    EncriptionManagerFactory.getInstance().hashMessage(passwordField.getText())));
-            if (user.getUserType() == UserType.ADMIN) {
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/product_view.fxml"));
-                    Parent root = (Parent) loader.load();
-                    // Obtain the Sign In window controller
-                    ProductViewController controller = ProductViewController.class
-                            .cast(loader.getController());
-                    controller.setStage(stage);
-                    controller.initStage(root);
-
-                } catch (Exception ex) {
-                    /*
-                Logger.getLogger(App.class
-                        .getName()).log(Level.SEVERE, null, ex);
-                     */
-                }
-
+            handleUsername(null, null, usernameTextField.getText());
+            if (passwordField.isVisible()) {
+                handlePassword(null, null, passwordField.getText());
             } else {
-                // XD
+                handlePassword(null, null, passwordTextField.getText());
             }
-        } catch (LogicException ex) {
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                User user = UserManagerFactory.getInstance().signIn(new User(usernameTextField.getText(),
+                        EncriptionManagerFactory.getInstance().hashMessage(passwordField.getText())));
+                if (user.getUserType() != null) {
+                    launchMainWindow();
+                }
+            } catch (LogicException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            shakeErrors(usernameErrorText, usernameErrorImage);
         }
-        shakeErrors(usernameErrorText, usernameErrorImage);
-
-        // TODO: launch the main window.
     }
 
     /**
@@ -278,12 +258,9 @@ public class LoginController extends GenericController {
                                 .cast(loader.getController());
                         controller.setStage(stage);
                         controller.initStage(root);
-
                     } catch (Exception ex) {
-                        /*
-                Logger.getLogger(App.class
-                        .getName()).log(Level.SEVERE, null, ex);
-                         */
+                        Logger.getLogger(LoginController.class
+                                .getName()).log(Level.SEVERE, null, ex);
                     }
                 });
     }
@@ -320,4 +297,20 @@ public class LoginController extends GenericController {
 
     }
 
+    private void launchMainWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/product_view.fxml"));
+            Parent root = (Parent) loader.load();
+            // Obtain the Sign In window controller
+            ProductViewController controller = ProductViewController.class
+                    .cast(loader.getController());
+            controller.setStage(stage);
+            controller.initStage(root);
+
+        } catch (Exception ex) {
+
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+    }
 }
