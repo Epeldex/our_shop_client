@@ -56,4 +56,6 @@ public interface CustomerManager {
      * process.
      */
     public void updateBalance(Customer customer) throws LogicException;
+
+    
 }
