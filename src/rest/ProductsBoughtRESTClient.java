@@ -11,14 +11,6 @@ import transfer.objects.ProductsBought;
 
 /**
  * Jersey REST client generated for REST resource: ProductsBoughtREST
- * [productsBought]<br>
- * USAGE:
- * <pre>
- *        ProductsBoughtRESTClient client = new ProductsBoughtRESTClient();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
- * </pre>
  *
  * This class provides a Jersey REST client for interacting with a RESTful web
  * service that deals with products bought entities. It extends

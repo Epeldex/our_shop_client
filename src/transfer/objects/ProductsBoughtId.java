@@ -9,7 +9,6 @@ import java.util.Objects;
  * customer to uniquely identify a record in the "products_bought" table.
  *
  * @author Alex Irusta
- *
  */
 public class ProductsBoughtId implements Serializable {
 
@@ -95,5 +94,4 @@ public class ProductsBoughtId implements Serializable {
     public String toString() {
         return "ProductsBoughtId{" + "productId=" + productId + ", customerId=" + customerId + '}';
     }
-
 }

@@ -5,6 +5,7 @@
  */
 package rest;
 
+import java.util.ResourceBundle;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 
@@ -14,7 +15,7 @@ import javax.ws.rs.client.WebTarget;
  */
 public class GenericRESTClient {
 
-    protected static final String BASE_URI = "http://localhost:8080/Our-shop/webresources";
+    protected static final String BASE_URI = ResourceBundle.getBundle("config/parameters").getString("URI");
 
     protected WebTarget webTarget;
     protected Client client;
