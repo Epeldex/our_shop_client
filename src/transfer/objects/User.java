@@ -5,11 +5,11 @@ import java.io.Serializable;
 
 /**
  * Entity representing users. It contains fields such as user ID, username,
- * password, user type, and active status. It also provides methods for
- * getting and setting these fields, as well as overridden methods for hash
- * code, equality, and string representation.
+ * password, user type, and active status. It also provides methods for getting
+ * and setting these fields, as well as overridden methods for hash code,
+ * equality, and string representation.
  *
- * @author dani
+ * @author Daniel Barrios
  */
 @XmlRootElement(name = "user")
 public class User implements Serializable {
@@ -19,13 +19,13 @@ public class User implements Serializable {
     private String username;
 
     private String password;
-    
+
     private boolean active;
 
-    
     private UserType userType;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String username, String password) {
         this.username = username;
@@ -78,7 +78,6 @@ public class User implements Serializable {
     }
 
     // setters
-
     /**
      * Set the user ID.
      *

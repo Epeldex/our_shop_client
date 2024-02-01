@@ -1,19 +1,11 @@
 package ui.exceptions;
 
+/**
+ * Custom exception for sign-up related errors.
+ */
 public class SignUpException extends Exception {
 
-    public String message;
-
-    public SignUpException() {}
-
     public SignUpException(String message) {
-        this.message = message;
+        super(message);
     }
-
-    public String getMessage() {
-        return message;
-    }
-
-
-
 }

@@ -1,15 +1,11 @@
 package ui.exceptions;
 
+/**
+ * Custom exception for sign-in related errors.
+ */
 public class SignInException extends Exception {
-    private String message;
-
-    public SignInException() {}
 
     public SignInException(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
+        super(message);
     }
 }

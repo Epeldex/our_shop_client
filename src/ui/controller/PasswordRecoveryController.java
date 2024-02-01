@@ -12,6 +12,9 @@ import javax.mail.internet.MimeMessage;
 import animatefx.animation.Jello;
 import animatefx.animation.partial.Contract;
 import animatefx.animation.partial.Expand;
+import app.App;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,6 +26,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import logic.exceptions.LogicException;
 
+/**
+ * Controller for the Password Recovery window.
+ *
+ * This class handles user interactions and controls the behavior of the
+ * Password Recovery window, including sending recovery emails and transitioning
+ * to the Login window.
+ *
+ * @author Alex Epelde
+ */
 public class PasswordRecoveryController extends GenericController {
 
     @FXML
@@ -35,10 +47,9 @@ public class PasswordRecoveryController extends GenericController {
     private AnchorPane box;
 
     /**
-     * method that initiates the stage and sets/prepares the values inside of
-     * it.
+     * Initializes the stage and sets/prepares the values inside of it.
      *
-     * @param root
+     * @param root The root node of the scene.
      */
     public void initStage(Parent root) {
         box.setVisible(false);
@@ -81,63 +92,32 @@ public class PasswordRecoveryController extends GenericController {
         slideBoxIn(box, 1);
     }
 
+    /**
+     * Handles changes in the email text field.
+     *
+     * @param observable The property being observed.
+     * @param oldValue The previous value of the property.
+     * @param newValue The new value of the property.
+     */
     public void handleEmail(ObservableValue observable,
             String oldValue, String newValue) {
 
     }
 
+    /**
+     * Handles the password recovery action.
+     *
+     * @param event The ActionEvent triggered by the recovery button.
+     */
     public void handleRecovery(ActionEvent event) {
-        try {
-            sendEmail("alexander.epelde@gmail.com");
-        } catch (Exception e) {
-            LOGGER.info(e.getMessage());
-        }
+
     }
 
-    private void sendEmail(String givenEmail) throws LogicException {
-        String emailToSend = new ReadHTMLFile().getMail();
-
-        //String emailToSend = "html.toString()";
-        // port and host configuration
-        final String ZOHO_HOST = "smtp.zoho.eu";
-        final String TLS_PORT = "897";
-        // senders credentials
-        final String SENDER_USERNAME = "bmoncalvillo@zohomail.eu";
-        final String SENDER_PASSWORD = "Du75zJLqbaZ1";
-
-        // protocol properties
-        Properties props = System.getProperties();
-        props.setProperty("mail.smtps.host", ZOHO_HOST); // change to GMAIL_HOST for gmail // for gmail
-        props.setProperty("mail.smtp.port", TLS_PORT);
-        props.setProperty("mail.smtp.starttls.enable", "true");
-        props.setProperty("mail.smtps.auth", "true");
-
-        // close connection upon quit being sent
-        props.put("mail.smtps.quitwait", "false");
-
-        Session session = Session.getInstance(props, null);
-
-        try {
-            // create the message
-            final MimeMessage msg = new MimeMessage(session);
-
-            // set recipients and content
-            msg.setFrom(new InternetAddress(SENDER_USERNAME));
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(givenEmail, false));
-            msg.setSubject("Demo");
-            msg.setText(emailToSend, "utf-8", "html");
-            msg.setSentDate(new Date());
-
-            // send the mail
-            Transport transport = session.getTransport("smtps");
-            // send the mail
-            transport.connect(ZOHO_HOST, SENDER_USERNAME, SENDER_PASSWORD);
-            transport.sendMessage(msg, msg.getAllRecipients());
-
-        } catch (MessagingException e) {
-        }
-    }
-
+    /**
+     * Handles the login action.
+     *
+     * @param event The ActionEvent triggered by the login button.
+     */
     public void handleLogin(ActionEvent event) {
         new Jello(loginButton).play();
         box.requestFocus();
@@ -158,10 +138,10 @@ public class PasswordRecoveryController extends GenericController {
                         controller.initStage(root);
 
                     } catch (Exception ex) {
-                        /*
-                         * Logger.getLogger(App.class
-                         * .getName()).log(Level.SEVERE, null, ex);
-                         */
+
+                        Logger.getLogger(App.class
+                                .getName()).log(Level.SEVERE, null, ex);
+
                     }
                 });
     }

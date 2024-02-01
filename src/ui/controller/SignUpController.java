@@ -5,6 +5,7 @@ import java.io.IOException;
 import animatefx.animation.*;
 import animatefx.animation.partial.Contract;
 import animatefx.animation.partial.Expand;
+import app.App;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import logic.exceptions.EmptyFieldException;
@@ -34,6 +35,12 @@ import logic.factories.CustomerManagerFactory;
 import transfer.objects.Customer;
 import transfer.objects.UserType;
 
+/**
+ * Controller class for the SignUp window. Handles user input validation and
+ * sign-up process.
+ *
+ * @author Alex Irusta
+ */
 public class SignUpController extends GenericController {
 
     @FXML
@@ -62,10 +69,9 @@ public class SignUpController extends GenericController {
     private boolean triedToSignUp;
 
     /**
-     * method that initiates the stage and sets/prepares the values inside of
-     * it.
+     * Initializes the stage and prepares the values inside it.
      *
-     * @param root
+     * @param root The root Parent of the stage.
      */
     public void initStage(Parent root) {
         box.setVisible(false); // necessary for the entrance animation.
@@ -146,7 +152,6 @@ public class SignUpController extends GenericController {
         showPasswordButton2.setFocusTraversable(false);
 
         // Close request reaction.
-        // TODO: + esc
         stage.setOnCloseRequest(this::handleCloseRequest);
 
         stage.show();
@@ -449,6 +454,7 @@ public class SignUpController extends GenericController {
         }
     }
 
+    // Event handler for the sign-up button
     private void handleSignUp(ActionEvent event) {
         triedToSignUp = true;
 
@@ -510,15 +516,16 @@ public class SignUpController extends GenericController {
                 controller.initStage(root);
 
             } catch (IOException ex) {
-                /*
-                                 * Logger.getLogger(App.class
-                                 * .getName()).log(Level.SEVERE, null, ex);
-                 */
+
+                Logger.getLogger(App.class
+                        .getName()).log(Level.SEVERE, null, ex);
+
             }
         });
 
     }
 
+    // Event handler for changing the password field or password field 1
     private void handleShowPassword1(ActionEvent event) {
         if (!passwordTextField1.isVisible()) {
             showPassword(passwordTextField1, passwordField1, showPasswordImage1, true);
@@ -530,6 +537,7 @@ public class SignUpController extends GenericController {
 
     }
 
+    // Event handler for changing the password field or password field 2
     private void handleShowPassword2(ActionEvent event) {
         if (!passwordTextField2.isVisible()) {
             showPassword(passwordTextField2, passwordField2, showPasswordImage2, true);

@@ -16,23 +16,12 @@ import transfer.objects.Tag;
 
 /**
  * Jersey REST client generated for REST resource: TagREST [tags]<br>
- * USAGE:
- * <pre>
- *        TagRESTClient client = new TagRESTClient();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
- * </pre>
  *
  * This class provides a Jersey REST client for interacting with a RESTful web
  * service that deals with tag entities. It extends GenericRESTClient, which is
  * assumed to contain common functionalities for REST clients.
  *
- * The web service is expected to be running on a Glassfish Server, and the
- * client is designed to perform CRUD (Create, Read, Update, Delete) operations
- * on tag entities.
- *
- * @author alexa
+ * @author Alex Epelde
  */
 public class TagRESTClient extends GenericRESTClient {
 
