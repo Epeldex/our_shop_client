@@ -23,8 +23,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -456,35 +454,35 @@ public class SignUpController extends GenericController {
 
     // Event handler for the sign-up button
     private void handleSignUp(ActionEvent event) {
-        triedToSignUp = true;
-
-        handleUsername(null, null, usernameTextField.getText());
-
-        handlePassword1(null, null, passwordField1.getText());
-
-        handlePassword2(null, null, passwordField2.getText());
-
-        handleEmail(null, null, emailTextField.getText());
-        handleFullName(null, null, fullNameTextField.getText());
-        handleAdress(null, null, adressTextField.getText());
-        handlePostalCode(null, null, postalCodeTextField.getText());
-        handleCity(null, null, cityTextField.getText());
-        handlePhoneNumber(null, null, phoneNumberTextField.getText());
-
-        Customer customer = new Customer();
-        customer.setActive(true);
-        customer.setBalance(0D);
-        customer.setCity(cityTextField.getText());
-        customer.setEmail(emailTextField.getText());
-        customer.setFullName(fullNameTextField.getText());
-        customer.setPassword(EncriptionManagerFactory.getInstance().hashMessage(passwordField2.getText()));
-        customer.setPhone(phoneNumberTextField.getText());
-        customer.setPostalCode(Integer.parseInt(postalCodeTextField.getText()));
-        customer.setStreet(adressTextField.getText());
-        customer.setUserType(UserType.CUSTOMER);
-        customer.setUsername(usernameTextField.getText());
-
         try {
+            triedToSignUp = true;
+
+            handleUsername(null, null, usernameTextField.getText());
+
+            handlePassword1(null, null, passwordField1.getText());
+
+            handlePassword2(null, null, passwordField2.getText());
+
+            handleEmail(null, null, emailTextField.getText());
+            handleFullName(null, null, fullNameTextField.getText());
+            handleAdress(null, null, adressTextField.getText());
+            handlePostalCode(null, null, postalCodeTextField.getText());
+            handleCity(null, null, cityTextField.getText());
+            handlePhoneNumber(null, null, phoneNumberTextField.getText());
+
+            Customer customer = new Customer();
+            customer.setActive(true);
+            customer.setBalance(0D);
+            customer.setCity(cityTextField.getText());
+            customer.setEmail(emailTextField.getText());
+            customer.setFullName(fullNameTextField.getText());
+            customer.setPassword(EncriptionManagerFactory.getInstance().hashMessage(passwordField2.getText()));
+            customer.setPhone(phoneNumberTextField.getText());
+            customer.setPostalCode(Integer.parseInt(postalCodeTextField.getText()));
+            customer.setStreet(adressTextField.getText());
+            customer.setUserType(UserType.CUSTOMER);
+            customer.setUsername(usernameTextField.getText());
+
             CustomerManagerFactory.getInstance().insertCustomer(customer);
         } catch (LogicException ex) {
             Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);

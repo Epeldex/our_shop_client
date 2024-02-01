@@ -851,7 +851,7 @@ public class ProductViewController extends GenericController {
             JRBeanCollectionDataSource items = new JRBeanCollectionDataSource((Collection<Product>) tvProduct.getItems());
             Map<String, Object> parameters = new HashMap<>();
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, items);
-            JasperViewer jasperViewer = new JasperViewer(jasperPrint);
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
             jasperViewer.setVisible(true);
         } catch (JRException ex) {
             Logger.getLogger(ProductViewController.class.getName()).log(Level.SEVERE, null, ex);

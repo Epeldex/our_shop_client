@@ -5,6 +5,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import transfer.objects.Customer;
 
@@ -98,11 +99,9 @@ public class CustomerRESTClient extends GenericRESTClient {
      * @throws WebApplicationException If there is an error while processing.
      * The error is wrapped in an HTTP error response.
      */
-    public <T> T resetPassword(Class<T> responseType, String email) throws WebApplicationException {
+    public <T> T  resetPassword(GenericType<T> responseType, String email) throws WebApplicationException {
         WebTarget resource = webTarget;
-
-        resource = resource.path(MessageFormat.format("customer/{0}", new Object[]{email}));
-        return resource.request(MediaType.APPLICATION_XML).get(responseType);
-
+        resource = resource.path(java.text.MessageFormat.format("email/{0}", new Object[]{email}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 }

@@ -1,23 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic.factories;
 
 import logic.business.SupplierManagerImplementation;
 import logic.interfaces.SupplierManager;
 
 /**
- *
- * @author alexa
+ * Factory class for providing a singleton instance of SupplierManager. Utilizes
+ * the Singleton design pattern for global and consistent access.
  */
 public class SupplierManagerFactory {
 
     private static SupplierManager obj = new SupplierManagerImplementation();
 
+    /**
+     * Returns the singleton instance of SupplierManager.
+     *
+     * @return Singleton instance of SupplierManager.
+     */
     public static SupplierManager getInstance() {
         return obj;
     }
-
 }

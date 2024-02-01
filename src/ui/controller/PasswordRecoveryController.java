@@ -1,20 +1,13 @@
 package ui.controller;
 
-import java.util.Date;
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import animatefx.animation.Jello;
 import animatefx.animation.partial.Contract;
 import animatefx.animation.partial.Expand;
 import app.App;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Base64;
+import javax.ws.rs.core.GenericType;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,7 +17,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import logic.exceptions.LogicException;
+import logic.business.EmailManager;
+import logic.encryption.EncriptionManagerFactory;
+import rest.CustomerRESTClient;
+import transfer.objects.Customer;
+
+
 
 /**
  * Controller for the Password Recovery window.
@@ -103,14 +101,25 @@ public class PasswordRecoveryController extends GenericController {
             String oldValue, String newValue) {
 
     }
-
     /**
      * Handles the password recovery action.
      *
      * @param event The ActionEvent triggered by the recovery button.
      */
-    public void handleRecovery(ActionEvent event) {
-
+    private void handleRecovery(ActionEvent event) {
+        try {
+            if (validateEmail(emailTextField.getText())) {
+                Customer customer = new CustomerRESTClient().resetPassword(
+                        new GenericType<Customer>() {
+                }, emailTextField.getText());
+                EmailManager em = new EmailManager(customer.getEmail(),
+                        Base64.getEncoder().encodeToString(
+                                EncriptionManagerFactory.getInstance().decryptMessage(customer.getPassword())));
+                em.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
