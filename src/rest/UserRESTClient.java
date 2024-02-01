@@ -11,21 +11,10 @@ import transfer.objects.User;
 
 /**
  * Jersey REST client generated for REST resource: UserREST [users]<br>
- * USAGE:
- * <pre>
- * UserRESTClient client = new UserRESTClient();
- * Object response = client.XXX(...);
- * // do whatever with response
- * client.close();
- * </pre>
  *
  * This class provides a Jersey REST client for interacting with a RESTful web
  * service that deals with user entities. It extends GenericRESTClient, which is
  * assumed to contain common functionalities for REST clients.
- *
- * The web service is expected to be running on a Glassfish Server, and the
- * client is designed to perform various operations on user entities, including
- * user authentication and CRUD (Create, Read, Update, Delete) operations.
  *
  * @author Daniel Barrios
  */
@@ -88,7 +77,7 @@ public class UserRESTClient extends GenericRESTClient {
         resource = resource.path(MessageFormat.format("username/{0}", new Object[]{username}));
         return resource.request(MediaType.APPLICATION_XML).get(responseType);
     }
-    
+
     /**
      * Retrieves a list of all user entities' XML representation from the web
      * service.
