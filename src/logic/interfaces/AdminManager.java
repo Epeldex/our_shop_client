@@ -6,6 +6,21 @@ import ui.exceptions.SignUpException;
 import logic.exceptions.LogicException;
 import transfer.objects.Admin;
 
+/**
+ * The {@code AdminManager} interface defines the operations that can be
+ * performed on an {@link Admin} object within the context of a user management
+ * system. It offers methods to sign in, create, update, and delete an admin.
+ * This interface acts as a contract for implementing classes to provide the
+ * necessary administrative functionalities in an application.
+ *
+ * Each method is designed to interact with the underlying application storage
+ * and handle specific administrative tasks. The {@code signIn} method is used
+ * for authenticating administrators, while {@code createAdmin},
+ * {@code updateAdmin}, and {@code removeAdmin} methods are used for managing
+ * admin accounts. These methods throw specific exceptions to handle scenarios
+ * where the operations cannot be completed as expected, providing robust error
+ * handling in the administrative process of the application.
+ */
 public interface AdminManager {
 
     /**

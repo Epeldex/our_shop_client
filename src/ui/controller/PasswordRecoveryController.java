@@ -21,6 +21,8 @@ import logic.encryption.EncriptionManagerFactory;
 import rest.CustomerRESTClient;
 import transfer.objects.Customer;
 
+
+
 public class PasswordRecoveryController extends GenericController {
 
     @FXML

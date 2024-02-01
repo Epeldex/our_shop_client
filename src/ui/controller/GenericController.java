@@ -171,7 +171,7 @@ public class GenericController {
     /**
      * method that analyses the username
      *
-     * @param email username to be checked
+     * @param username username to be checked
      * @return true if value is correct
      * @throws IncorrectFormatException if value doesn't match condition.
      */
