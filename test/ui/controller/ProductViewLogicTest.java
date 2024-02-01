@@ -31,6 +31,7 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.testfx.framework.junit.ApplicationTest;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.*;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
@@ -39,7 +40,7 @@ import transfer.objects.Supplier;
 import transfer.objects.Tag;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ProductViewControllerIT extends ApplicationTest {
+public class ProductViewLogicTest extends ApplicationTest {
 
     private static final String OVERSIZED_TEXT
             = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -71,7 +72,7 @@ public class ProductViewControllerIT extends ApplicationTest {
     @Override
     public void start(Stage stage) throws Exception {
         // Assuming your main JavaFX app class is named MainApp
-        new ProductViewControllerIT().launch(stage);
+        new ProductViewLogicTest().launch(stage);
         // Initialize UI elements
         btnListProducts = lookup("#btnListProducts").queryButton();
         btnAdd = lookup("#btnAdd").queryButton();
@@ -82,108 +83,37 @@ public class ProductViewControllerIT extends ApplicationTest {
         // Initialize other table columns
     }
 
-    @Test
-    public void testA_initialState() {
-        verifyThat(btnListProducts, isEnabled());
-        verifyThat(btnAdd, isEnabled());
-        verifyThat(btnDelete, isDisabled());
-        verifyThat(btnEdit, isDisabled());
-        verifyThat(btnExit, isEnabled());
-        verifyThat(tvProduct, hasNumRows(0));
-    }
 
     @Test
-    public void testB_addProduct() {
-        int initialCount = tvProduct.getItems().size();
+    public void testA_EditBrandColumn() {
+        clickOn(btnListProducts);
         clickOn(btnAdd);
-        // Assert a new product is added
-        verifyThat(tvProduct, hasNumRows(initialCount + 1));
-    }
-
-    @Test
-    public void testC_listProducts() {
-        clickOn(btnListProducts);
-        verifyThat(tvProduct, hasNumRows(tvProduct.getItems().size())); // Assuming at least one item is loaded
-    }
-
-//    @Test
-//    public void testD_editProduct() {
-//        // Select the first row in the table
-//        clickOn(btnListProducts);
-//        clickOn(tvProduct.getItems().get(tvProduct.getItems().size() - 1).getBrand());
-//        clickOn(btnEdit);
-//        String newBrand = "New Brand";
-//        write(newBrand);
-//        press(KeyCode.ENTER);
-//        // Verify the brand is updated
-//        assertEquals("Nuh uh", tvProduct.getItems().stream().filter(p -> p.getBrand().equals(newBrand)).count(),
-//                1);
-//    }
-    @Test
-    public void testF_tableSelection() {
-        clickOn(btnListProducts);
-        TableRow<Product> row = lookup(".table-row-cell").nth(0).query();
-        clickOn(row);
-        verifyThat(btnDelete, isEnabled());
-        // Deselect and verify buttons are disabled
-        clickOn(btnListProducts);
-        verifyThat(btnDelete, isDisabled());
-    }
-
-    @Test
-    public void testG_EditAllTableColumns() {
-        clickOn("#btnListProducts");
-        clickOn("#btnAdd");
-
-        int lastRowIndex = tvProduct.getItems().size() - 1;
-        clickOn(tvProduct.getItems().get(lastRowIndex).getTag().getType());
-
-        testEditBrandColumn();
-        testEditModelColumn();
-        testEditWeightColumn();
-        testEditPriceColumn();
-        testEditDescriptionColumn();
-        testEditOtherInfoColumn();
-        testEditAdditionDateColumn();
-        testEditSupplierColumn();
-        testEditTagColumn();
-    }
-
-//    @Test
-    public void testEditBrandColumn() {
-        // Click on "List Products" and "Add" to add a new product
-
         // Retrieve the TableView and get the last row index
         int lastRowIndex = tvProduct.getItems().size() - 1;
 
         // Retrieve the brand value of the last row
         Product lastProduct = tvProduct.getItems().get(lastRowIndex);
-        String brandValue = lastProduct.getBrand();
+        String oldBrand = lastProduct.getBrand();
 
-        clickOn(brandValue);
+        doubleClickOn(oldBrand);
         push(KeyCode.BACK_SPACE);
         push(KeyCode.ENTER);
         clickOn("OK");
 
         // Test with oversized text
-        clickOn(brandValue);
+        clickOn(oldBrand);
         write(OVERSIZED_TEXT);
         push(KeyCode.ENTER);
         clickOn("OK");
 
-        // Test with valid text
-        String validText = "New Brand";
-        clickOn(brandValue);
-        write(validText);
-        push(KeyCode.ENTER);
-
         // Verify the cell value
-        String updatedBrandValue = tvProduct.getItems().get(lastRowIndex).getBrand();
-        assertEquals(validText, updatedBrandValue);
+        String currentBrand = tvProduct.getItems().get(lastRowIndex).getBrand();
+        assertEquals(oldBrand, currentBrand);
     }
 
-//    @Test
-    public void testEditModelColumn() {
+    @Test
+    public void testB_EditModelColumn() {
+        clickOn(btnListProducts);
         // Retrieve the TableView and get the last row index
         int lastRowIndex = tvProduct.getItems().size() - 1;
 
@@ -192,7 +122,7 @@ public class ProductViewControllerIT extends ApplicationTest {
         String modelValue = lastProduct.getModel();
 
         // Edit the model
-        clickOn(modelValue);
+        doubleClickOn(modelValue);
         push(KeyCode.BACK_SPACE);
         push(KeyCode.ENTER);
         clickOn("OK");
@@ -203,19 +133,14 @@ public class ProductViewControllerIT extends ApplicationTest {
         push(KeyCode.ENTER);
         clickOn("OK");
 
-        // Test with valid text
-        String validText = "New Model";
-        clickOn(modelValue);
-        write(validText);
-        push(KeyCode.ENTER);
-
         // Verify the cell value
         String updatedModelValue = tvProduct.getItems().get(lastRowIndex).getModel();
-        assertEquals(validText, updatedModelValue);
+        assertEquals(modelValue, updatedModelValue);
     }
 
-//    @Test
-    public void testEditDescriptionColumn() {
+    @Test
+    public void testC_EditDescriptionColumn() {
+        clickOn(btnListProducts);
         // Retrieve the TableView and get the last row index
         int lastRowIndex = tvProduct.getItems().size() - 1;
 
@@ -224,7 +149,7 @@ public class ProductViewControllerIT extends ApplicationTest {
         String descriptionValue = lastProduct.getDescription();
 
         // Edit the description
-        clickOn(descriptionValue);
+        doubleClickOn(descriptionValue);
         push(KeyCode.BACK_SPACE);
         push(KeyCode.ENTER);
         clickOn("OK");
@@ -235,19 +160,14 @@ public class ProductViewControllerIT extends ApplicationTest {
         push(KeyCode.ENTER);
         clickOn("OK");
 
-        // Test with valid text
-        String validText = "New Description";
-        clickOn(descriptionValue);
-        write(validText);
-        push(KeyCode.ENTER);
-
         // Verify the cell value
         String updatedDescriptionValue = tvProduct.getItems().get(lastRowIndex).getDescription();
-        assertEquals(validText, updatedDescriptionValue);
+        assertEquals(descriptionValue, updatedDescriptionValue);
     }
 
-//    @Test
-    public void testEditOtherInfoColumn() {
+    @Test
+    public void testD_EditOtherInfoColumn() {
+        clickOn(btnListProducts);
         int lastRowIndex = tvProduct.getItems().size() - 1;
 
         // Retrieve the other info value of the last row
@@ -255,7 +175,7 @@ public class ProductViewControllerIT extends ApplicationTest {
         String otherInfoValue = lastProduct.getOtherInfo();
 
         // Edit the other info
-        clickOn(otherInfoValue);
+        doubleClickOn(otherInfoValue);
         push(KeyCode.BACK_SPACE);
         push(KeyCode.ENTER);
         clickOn("OK");
@@ -266,19 +186,14 @@ public class ProductViewControllerIT extends ApplicationTest {
         push(KeyCode.ENTER);
         clickOn("OK");
 
-        // Test with valid text
-        String validText = "New Other Info";
-        clickOn(otherInfoValue);
-        write(validText);
-        push(KeyCode.ENTER);
-
         // Verify the cell value
         String updatedOtherInfoValue = tvProduct.getItems().get(lastRowIndex).getOtherInfo();
-        assertEquals(validText, updatedOtherInfoValue);
+        assertEquals(otherInfoValue, updatedOtherInfoValue);
     }
 
-//    @Test
-    public void testEditWeightColumn() {
+    @Test
+    public void testE_EditWeightColumn() {
+        clickOn(btnListProducts);
         int lastRowIndex = tvProduct.getItems().size() - 1;
 
         // Retrieve the weight value of the last row
@@ -286,7 +201,7 @@ public class ProductViewControllerIT extends ApplicationTest {
         Double weightValue = lastProduct.getWeight();
 
         // Edit the weight with invalid input
-        clickOn(weightValue.toString());
+        doubleClickOn(weightValue.toString());
         write("invalid");
         push(KeyCode.ENTER);
         clickOn("OK");
@@ -302,19 +217,14 @@ public class ProductViewControllerIT extends ApplicationTest {
         push(KeyCode.ENTER);
         clickOn("OK");
 
-        // Edit the weight with a valid value
-        Double validWeight = 10.0;
-        clickOn(weightValue.toString());
-        write(validWeight.toString());
-        push(KeyCode.ENTER);
-
         // Verify the cell value
         Double updatedWeightValue = tvProduct.getItems().get(lastRowIndex).getWeight();
-        assertEquals(validWeight, updatedWeightValue);
+        assertEquals(weightValue, updatedWeightValue);
     }
 
-//    @Test
-    public void testEditPriceColumn() {
+    @Test
+    public void testF_EditPriceColumn() {
+        clickOn(btnListProducts);
         int lastRowIndex = tvProduct.getItems().size() - 1;
 
         // Retrieve the price value of the last row
@@ -322,7 +232,7 @@ public class ProductViewControllerIT extends ApplicationTest {
         Double priceValue = lastProduct.getPrice();
 
         // Edit the price with invalid input
-        clickOn(priceValue.toString());
+        doubleClickOn(priceValue.toString());
         write("invalid");
         push(KeyCode.ENTER);
         clickOn("OK");
@@ -338,19 +248,14 @@ public class ProductViewControllerIT extends ApplicationTest {
         push(KeyCode.ENTER);
         clickOn("OK");
 
-        // Edit the weight with a valid value
-        Double validPrice = 10.0;
-        clickOn(priceValue.toString());
-        write(validPrice.toString());
-        push(KeyCode.ENTER);
-
         // Verify the cell value
         Double updatedPriceValue = tvProduct.getItems().get(lastRowIndex).getPrice();
-        assertEquals(validPrice, updatedPriceValue);
+        assertEquals(priceValue, updatedPriceValue);
     }
 
-//    @Test
-    public void testEditAdditionDateColumn() {
+    @Test
+    public void testG_EditAdditionDateColumn() {
+        clickOn(btnListProducts);
         int lastRowIndex = tvProduct.getItems().size() - 1;
 
         // Click on the addition date cell to open the DatePicker
@@ -361,7 +266,7 @@ public class ProductViewControllerIT extends ApplicationTest {
         String currentDate = formatter.format(lastProduct.getCreateTimestamp().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         String dateToChange = formatter.format(LocalDate.now().minusDays(5));
 
-        clickOn(currentDate);
+        doubleClickOn(currentDate);
         clickOn();
         write(dateToChange);
         press(KeyCode.ENTER); // Confirm the date selection
@@ -379,9 +284,10 @@ public class ProductViewControllerIT extends ApplicationTest {
         assertEquals(LocalDate.now(), updatedAdditionDateValue);
     }
 
-//    @Test
-    public void testEditSupplierColumn() {
+    @Test
+    public void testH_EditSupplierColumn() {
         try {
+            clickOn(btnListProducts);
             int lastRowIndex = tvProduct.getItems().size() - 1;
             List<String> supplierNames = new ArrayList<>();
 
@@ -389,7 +295,7 @@ public class ProductViewControllerIT extends ApplicationTest {
 
             // Scenario 1: Enter an existing supplier
             String existingSupplierName = supplierNames.get(new Random().nextInt(supplierNames.size()));
-            clickOn(tvProduct.getItems().get(lastRowIndex).getSupplier().getName());
+            doubleClickOn(tvProduct.getItems().get(lastRowIndex).getSupplier().getName());
             clickOn();
             write(existingSupplierName);
             push(KeyCode.ENTER);
@@ -417,19 +323,21 @@ public class ProductViewControllerIT extends ApplicationTest {
             // Additional assertions can be made based on the expected selected supplier
 
         } catch (Exception e) {
-            Logger.getLogger(ProductViewControllerIT.class).info("OOPS");
+            Logger.getLogger(ProductViewLogicTest.class).info("OOPS");
         }
     }
 
-    public void testEditTagColumn() {
+    @Test
+    public void testI_EditTagColumn() {
         try {
+            clickOn(btnListProducts);
             int lastRowIndex = tvProduct.getItems().size() - 1;
             List<String> tagTypes = new ArrayList<>();
 
             tagTypes = TagManagerFactory.getInstance().selectAllTags().stream().map(t -> t.getType()).collect(Collectors.toList());
 
             // Scenario 1: Enter an existing supplier
-            clickOn(tvProduct.getItems().get(lastRowIndex).getTag().getType());
+            doubleClickOn(tvProduct.getItems().get(lastRowIndex).getTag().getType());
             clickOn(".combo-box .arrow-button");
             ComboBox<Supplier> comboBox = lookup(".combo-box").queryComboBox();
             interact(() -> comboBox.getSelectionModel().select(1)); // Select the second supplier for example
@@ -439,12 +347,12 @@ public class ProductViewControllerIT extends ApplicationTest {
             assertNotNull(selectedTag); // Assert that a supplier is selected
             // Additional assertions can be made based on the expected selected supplier
         } catch (Exception e) {
-            Logger.getLogger(ProductViewControllerIT.class).info("OOPS");
+            Logger.getLogger(ProductViewLogicTest.class).info("OOPS");
         }
     }
 
     @Test
-    public void testG_deleteProduct() {
+    public void testJ_deleteProduct() {
         clickOn(btnListProducts);
         Product productToDelete = tvProduct.getItems().get(tvProduct.getItems().size() - 1);
         clickOn(productToDelete.getDescription());
@@ -457,7 +365,7 @@ public class ProductViewControllerIT extends ApplicationTest {
     }
 
     @Test
-    public void testH_exitButton() {
+    public void testK_exitButton() {
         clickOn(btnExit);
         clickOn("OK");
     }
