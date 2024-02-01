@@ -26,7 +26,8 @@ import logic.factories.UserManagerFactory;
 import transfer.objects.User;
 
 /**
- * Controller class for the login view. Handles all the actions of the login view
+ * Controller class for the login view. Handles all the actions of the login
+ * view
  *
  */
 public class LoginController extends GenericController {
@@ -114,15 +115,13 @@ public class LoginController extends GenericController {
         loginButton.setOnAction(this::handleLogin);
 
         // Button hovering animations
-        {
-            loginButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    new Expand(loginButton).play();
-                } else {
-                    new Contract(loginButton).play();
-                }
-            });
-        }
+        loginButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                new Expand(loginButton).play();
+            } else {
+                new Contract(loginButton).play();
+            }
+        });
 
         showPasswordButton.setFocusTraversable(false);
         loginButton.setDefaultButton(true);
@@ -215,27 +214,27 @@ public class LoginController extends GenericController {
      * LAUNCHING OTHER WINDOWS
      */
     private void handleLogin(ActionEvent event) {
-        triedToLogin = true;
-        new RubberBand(loginButton).play();
-        if (usernameTextField.getText().equals("admin") && passwordField.getText().equals("abcd*1234")) {
-            launchMainWindow();
-        } else {
-            handleUsername(null, null, usernameTextField.getText());
-            if (passwordField.isVisible()) {
-                handlePassword(null, null, passwordField.getText());
+        try {
+            triedToLogin = true;
+            new RubberBand(loginButton).play();
+            if (usernameTextField.getText().equals("admin") && passwordField.getText().equals("abcd*1234")) {
+                launchMainWindow();
             } else {
-                handlePassword(null, null, passwordTextField.getText());
-            }
-            try {
+                handleUsername(null, null, usernameTextField.getText());
+                if (passwordField.isVisible()) {
+                    handlePassword(null, null, passwordField.getText());
+                } else {
+                    handlePassword(null, null, passwordTextField.getText());
+                }
                 User user = UserManagerFactory.getInstance().signIn(new User(usernameTextField.getText(),
                         EncriptionManagerFactory.getInstance().hashMessage(passwordField.getText())));
                 if (user.getUserType() != null) {
                     launchMainWindow();
                 }
-            } catch (LogicException ex) {
-                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                shakeErrors(usernameErrorText, usernameErrorImage);
             }
-            shakeErrors(usernameErrorText, usernameErrorImage);
+        } catch (Exception e) {
+            showErrorAlert("ERROR", "Error trying to log in", e.getMessage());
         }
     }
 

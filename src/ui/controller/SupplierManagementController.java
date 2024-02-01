@@ -6,7 +6,6 @@
 package ui.controller;
 
 import app.App;
-import java.io.IOException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -15,10 +14,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -39,7 +36,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
@@ -50,8 +46,6 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
-import ui.controller.IntegerStringConverter;
-import transfer.objects.Product;
 import util.DataGenerator;
 
 /**
@@ -103,88 +97,92 @@ public class SupplierManagementController extends GenericController {
      * @param root The root of the UI scene.
      */
     public void initStage(Parent root) {
-        // Set up the scene
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        try {
+            // Set up the scene
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
 
-        stage.setTitle("Supplier Management");
-        stage.setResizable(false);
+            stage.setTitle("Supplier Management");
+            stage.setResizable(false);
 
-        // Initialize supplier manager
-        supplierManager = SupplierManagerFactory.getInstance();
+            // Initialize supplier manager
+            supplierManager = SupplierManagerFactory.getInstance();
 
-        // Set up button actions
-        btnExit.setOnAction(event -> handleExitButtonAction());
-        btnListSuppliers.setOnAction(event -> handleListButtonAction());
-        btnAdd.setOnAction(event -> handleAddButtonAction(event));
-        btnEdit.setOnAction(event -> handleEditButtonAction(event));
-        btnDelete.setOnAction(event -> handleDeleteButtonAction());
+            // Set up button actions
+            btnExit.setOnAction(event -> handleExitButtonAction());
+            btnListSuppliers.setOnAction(event -> handleListButtonAction());
+            btnAdd.setOnAction(event -> handleAddButtonAction(event));
+            btnEdit.setOnAction(event -> handleEditButtonAction(event));
+            btnDelete.setOnAction(event -> handleDeleteButtonAction());
 
-        // Set initial visibility for the edit button
-        btnEdit.setVisible(false);
+            // Set initial visibility for the edit button
+            btnEdit.setVisible(false);
 
-        // Set up close request event
-        stage.setOnCloseRequest(event -> handleCloseRequest(event, stage));
+            // Set up close request event
+            stage.setOnCloseRequest(event -> handleCloseRequest(event, stage));
 
-        // Enable/disable buttons based on selection in the TableView
-        tvSupplier.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                btnEdit.setDisable(false);
-                btnDelete.setDisable(false);
-            } else {
-                btnEdit.setDisable(true);
-                btnDelete.setDisable(true);
-            }
-        });
+            // Enable/disable buttons based on selection in the TableView
+            tvSupplier.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    btnEdit.setDisable(false);
+                    btnDelete.setDisable(false);
+                } else {
+                    btnEdit.setDisable(true);
+                    btnDelete.setDisable(true);
+                }
+            });
 
-        // Set up context menu actions
-        miAdd.setOnAction(event -> handleAddButtonAction(event));
-        miEdit.setOnAction(event -> handleEditButtonAction(event));
-        miDelete.setOnAction(event -> handleDeleteButtonAction());
+            // Set up context menu actions
+            miAdd.setOnAction(event -> handleAddButtonAction(event));
+            miEdit.setOnAction(event -> handleEditButtonAction(event));
+            miDelete.setOnAction(event -> handleDeleteButtonAction());
 
-        // Set up menu action
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0)).getMenus().get(0))
-                .getItems().get(0).setOnAction(super::handleLogOutAction);
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(1)).getItems().get(0).setOnAction(this::showAboutDialog);
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(2)).getItems().get(0).setOnAction(this::handlePrintReportAction);
+            // Set up menu action
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0)).getMenus().get(0))
+                    .getItems().get(0).setOnAction(super::handleLogOutAction);
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(1)).getItems().get(0).setOnAction(this::showAboutDialog);
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(2)).getItems().get(0).setOnAction(this::handlePrintReportAction);
 
-        // Set up TableView columns
-        nameColumnId.setCellValueFactory(new PropertyValueFactory<>("name"));
-        phoneColumnId.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        countryColumnId.setCellValueFactory(new PropertyValueFactory<>("country"));
-        zipColumnId.setCellValueFactory(new PropertyValueFactory<>("zip"));
-        dateColumnId.setCellValueFactory(factory -> getDateToLocalDateValueFactory(factory));
+            // Set up TableView columns
+            nameColumnId.setCellValueFactory(new PropertyValueFactory<>("name"));
+            phoneColumnId.setCellValueFactory(new PropertyValueFactory<>("phone"));
+            countryColumnId.setCellValueFactory(new PropertyValueFactory<>("country"));
+            zipColumnId.setCellValueFactory(new PropertyValueFactory<>("zip"));
+            dateColumnId.setCellValueFactory(factory -> getDateToLocalDateValueFactory(factory));
 
-        // Set cell factories for editable columns
-        nameColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
-        dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
-        countryColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
-        dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
-        phoneColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
-        zipColumnId.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+            // Set cell factories for editable columns
+            nameColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
+            dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
+            countryColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
+            dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
+            phoneColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
+            zipColumnId.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 
-        zipColumnId.setOnEditCommit(this::handleZipCellEdition);
-        nameColumnId.setOnEditCommit(this::handleNameCellEdition);
-        countryColumnId.setOnEditCommit(this::handleCountryCellEdition);
-        dateColumnId.setOnEditCommit(this::handleAdditionDateCellEdition);
-        phoneColumnId.setOnEditCommit(this::handlePhoneCellEdition);
+            zipColumnId.setOnEditCommit(this::handleZipCellEdition);
+            nameColumnId.setOnEditCommit(this::handleNameCellEdition);
+            countryColumnId.setOnEditCommit(this::handleCountryCellEdition);
+            dateColumnId.setOnEditCommit(this::handleAdditionDateCellEdition);
+            phoneColumnId.setOnEditCommit(this::handlePhoneCellEdition);
 
-        // Set up initial menu item for product management
-        MenuItem mitProductManagement = new MenuItem();
-        mitProductManagement.setText("Product Management");
-        mitProductManagement.setMnemonicParsing(false);
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0)).getMenus().get(0)).getItems().add(mitProductManagement);
-        mitProductManagement.setOnAction(event -> handleProductMenuItemAction(event));
+            // Set up initial menu item for product management
+            MenuItem mitProductManagement = new MenuItem();
+            mitProductManagement.setText("Product Management");
+            mitProductManagement.setMnemonicParsing(false);
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0)).getMenus().get(0)).getItems().add(mitProductManagement);
+            mitProductManagement.setOnAction(event -> handleProductMenuItemAction(event));
 
-        // Add a listener to handle selected item changes
-        tvSupplier.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
+            // Add a listener to handle selected item changes
+            tvSupplier.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
 
-        // Initialize supplier list and show the stage
-        supplierList = FXCollections.observableArrayList();
-        stage.centerOnScreen();
-        stage.show();
+            // Initialize supplier list and show the stage
+            supplierList = FXCollections.observableArrayList();
+            stage.centerOnScreen();
+            stage.show();
+        } catch (Exception e) {
+            showErrorAlert("ERROR", "An error occurred while initializing the Supplier Managament window", e.getMessage());
+        }
     }
 
     /**
@@ -681,7 +679,7 @@ public class SupplierManagementController extends GenericController {
 
     private void handlePrintReportAction(ActionEvent event) {
         try {
-            JasperReport report = JasperCompileManager.compileReport("src/ui/report/SupplierReport.jrxml");
+            JasperReport report = JasperCompileManager.compileReport(getClass().getClassLoader().getResourceAsStream("ui/report/SupplierReport.jrxml"));
             JRBeanCollectionDataSource items = new JRBeanCollectionDataSource((Collection<Supplier>) tvSupplier.getItems());
             Map<String, Object> parameters = new HashMap<>();
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, items);

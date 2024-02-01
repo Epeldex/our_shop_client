@@ -7,10 +7,8 @@ package ui.controller;
 
 import app.App;
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Collection;
 import ui.controls.EditableComboBoxTableCell;
 import ui.controls.ProductDatePickerTableCell;
@@ -21,7 +19,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.Observable;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -229,81 +226,85 @@ public class ProductViewController extends GenericController {
      * graph.
      * @throws Exception If an error occurs during initialization.
      */
-    public void initStage(Parent root) throws Exception {
-        // Log initialization message
-        LOGGER.info("Initializing window");
+    public void initStage(Parent root) {
+        try {
+            // Log initialization message
+            LOGGER.info("Initializing window");
 
-        // Create a scene and set it on the stage
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+            // Create a scene and set it on the stage
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
 
-        // Configure stage properties
-        stage.setTitle("Product Management");
-        stage.setResizable(false);
+            // Configure stage properties
+            stage.setTitle("Product Management");
+            stage.setResizable(false);
 
-        // Configure date addition pattern based on user's system language
-        // Obtain the business logic implementation object
-        productManager = ProductManagerFactory.getInstance();
-        supplierList = SupplierManagerFactory.getInstance().selectAllSuppliers();
-        ObservableList<Tag> tagList = FXCollections.observableArrayList(TagManagerFactory.getInstance().selectAllTags());
+            // Configure date addition pattern based on user's system language
+            // Obtain the business logic implementation object
+            productManager = ProductManagerFactory.getInstance();
+            supplierList = SupplierManagerFactory.getInstance().selectAllSuppliers();
+            ObservableList<Tag> tagList = FXCollections.observableArrayList(TagManagerFactory.getInstance().selectAllTags());
 
-        // Configure table columns
-        cProductNumber.setCellValueFactory(new PropertyValueFactory<>("productNumber"));
-        cBrand.setCellValueFactory(new PropertyValueFactory<>("brand"));
-        cModel.setCellValueFactory(new PropertyValueFactory<>("model"));
-        cWeight.setCellValueFactory(new PropertyValueFactory<>("weight"));
-        cPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-        cDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
-        cOtherInfo.setCellValueFactory(new PropertyValueFactory<>("otherInfo"));
-        cAdditionDate.setCellValueFactory(factory -> {
-            return getDateToLocalDateValueFactory(factory);
-        });
-        cSupplier.setCellValueFactory(new PropertyValueFactory<>("supplier"));
-        cTag.setCellValueFactory(new PropertyValueFactory<>("tag"));
+            // Configure table columns
+            cProductNumber.setCellValueFactory(new PropertyValueFactory<>("productNumber"));
+            cBrand.setCellValueFactory(new PropertyValueFactory<>("brand"));
+            cModel.setCellValueFactory(new PropertyValueFactory<>("model"));
+            cWeight.setCellValueFactory(new PropertyValueFactory<>("weight"));
+            cPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+            cDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
+            cOtherInfo.setCellValueFactory(new PropertyValueFactory<>("otherInfo"));
+            cAdditionDate.setCellValueFactory(factory -> {
+                return getDateToLocalDateValueFactory(factory);
+            });
+            cSupplier.setCellValueFactory(new PropertyValueFactory<>("supplier"));
+            cTag.setCellValueFactory(new PropertyValueFactory<>("tag"));
 
-        // Configure cell factories for editable columns
-        cBrand.setCellFactory(TextFieldTableCell.forTableColumn());
-        cModel.setCellFactory(TextFieldTableCell.forTableColumn());
-        cWeight.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        cPrice.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        cDescription.setCellFactory(TextFieldTableCell.forTableColumn());
-        cOtherInfo.setCellFactory(TextFieldTableCell.forTableColumn());
-        cSupplier.setCellFactory(getEditableComboBoxCellFactory());
-        cAdditionDate.setCellFactory(getDatePickerCellFactory());
-        cTag.setCellFactory(ComboBoxTableCell.forTableColumn(tagList));
+            // Configure cell factories for editable columns
+            cBrand.setCellFactory(TextFieldTableCell.forTableColumn());
+            cModel.setCellFactory(TextFieldTableCell.forTableColumn());
+            cWeight.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+            cPrice.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+            cDescription.setCellFactory(TextFieldTableCell.forTableColumn());
+            cOtherInfo.setCellFactory(TextFieldTableCell.forTableColumn());
+            cSupplier.setCellFactory(getEditableComboBoxCellFactory());
+            cAdditionDate.setCellFactory(getDatePickerCellFactory());
+            cTag.setCellFactory(ComboBoxTableCell.forTableColumn(tagList));
 
-        // Configure selection listener for the TableView
-        tvProduct.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
-        // Initialize product list and set it to the TableView
-        productList = FXCollections.observableArrayList();
-        tvProduct.setItems(productList);
+            // Configure selection listener for the TableView
+            tvProduct.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
+            // Initialize product list and set it to the TableView
+            productList = FXCollections.observableArrayList();
+            tvProduct.setItems(productList);
 
-        //Add a menu item to the actions Menu
-        MenuItem mitSupplierManagement = new MenuItem();
-        mitSupplierManagement.setText("Supplier Management");
-        mitSupplierManagement.setMnemonicParsing(false);
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(0)).getItems().add(mitSupplierManagement);
+            //Add a menu item to the actions Menu
+            MenuItem mitSupplierManagement = new MenuItem();
+            mitSupplierManagement.setText("Supplier Management");
+            mitSupplierManagement.setMnemonicParsing(false);
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(0)).getItems().add(mitSupplierManagement);
 
-        // Set actions for the menu bar's menus' items
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(0)).getItems().get(0).setOnAction(super::handleLogOutAction); //Logout menu item
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(0)).getItems().get(1).setOnAction(this::handleSupplierMenuItemAction); //Supplier Management menu item
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(1)).getItems().get(0).setOnAction(this::handleAboutAction); //About menu item
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(1)).getItems().get(1).setOnAction(this::handleHelpAction); //Help menu item, user manual
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(2)).getItems().get(0).setOnAction(this::handlePrintReportAction); // Print report menu item, prints report
+            // Set actions for the menu bar's menus' items
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(0)).getItems().get(0).setOnAction(super::handleLogOutAction); //Logout menu item
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(0)).getItems().get(1).setOnAction(this::handleSupplierMenuItemAction); //Supplier Management menu item
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(1)).getItems().get(0).setOnAction(this::handleAboutAction); //About menu item
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(1)).getItems().get(1).setOnAction(this::handleHelpAction); //Help menu item, user manual
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(2)).getItems().get(0).setOnAction(this::handlePrintReportAction); // Print report menu item, prints report
 
-        btnEdit.setVisible(false);
-        miEdit.setVisible(false);
-        // Set close request handler for the stage
-        stage.setOnCloseRequest(super::handleCloseRequest);
-        stage.centerOnScreen();
-        // Show the stage
-        stage.show();
+            btnEdit.setVisible(false);
+            miEdit.setVisible(false);
+            // Set close request handler for the stage
+            stage.setOnCloseRequest(super::handleCloseRequest);
+            stage.centerOnScreen();
+            // Show the stage
+            stage.show();
+        } catch (Exception e) {
+            showErrorAlert("ERROR", "Error initializing Product Management window", e.getMessage());
+        }
     }
 
     /**
@@ -847,7 +848,7 @@ public class ProductViewController extends GenericController {
      */
     private void handlePrintReportAction(ActionEvent event) {
         try {
-            JasperReport report = JasperCompileManager.compileReport("src/ui/report/ProductReport.jrxml");
+            JasperReport report = JasperCompileManager.compileReport(getClass().getClassLoader().getResourceAsStream("ui/report/ProductReport.jrxml"));
             JRBeanCollectionDataSource items = new JRBeanCollectionDataSource((Collection<Product>) tvProduct.getItems());
             Map<String, Object> parameters = new HashMap<>();
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, items);
