@@ -10,12 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * setting this field, as well as overridden methods for equality and string
  * representation.
  *
- * Note: The equals method is overridden from the User class, but the
- * implementation is incorrect. It should compare Admin objects instead of User
- * objects. The correct method should be provided based on the actual
- * requirements.
- *
- * @author dani
+ * @author Daniel Barrios
  */
 @XmlRootElement(name = "admin")
 public class Admin extends User {
@@ -45,10 +40,6 @@ public class Admin extends User {
 
     /**
      * Compare two Admin objects for equality based on their ID.
-     *
-     * Note: The implementation is incorrect. It should compare Admin objects
-     * instead of User objects. Correct the method based on the actual
-     * requirements.
      *
      * @param object The other Admin object to compare to.
      * @return true if IDs are equal

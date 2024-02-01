@@ -11,14 +11,9 @@ import rest.CustomerRESTClient;
 import transfer.objects.Customer;
 
 /**
- * This class implements {@link CustomerManager} business logic interface using
- * a RESTful web client to access business logic in a Java EE application
+ * This class implements the {@link CustomerManager} business logic interface
+ * using a RESTful web client to access business logic in a Java EE application
  * server.
- *
- * It provides methods for updating, deleting, inserting, and retrieving
- * customer information, as well as updating customer balance. The class uses an
- * instance of {@link CustomerRESTClient} for communication with the RESTful
- * service and logs relevant information and exceptions using a {@link Logger}.
  *
  * @author Alex Irusta
  */

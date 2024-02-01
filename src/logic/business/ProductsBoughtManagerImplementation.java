@@ -10,9 +10,9 @@ import rest.ProductsBoughtRESTClient;
 import transfer.objects.ProductsBought;
 
 /**
- * This class implements {@link ProductsBoughtManager} business logic interface
- * using a RESTful web client to access business logic in a Java EE application
- * server.
+ * This class implements the {@link ProductsBoughtManager} business logic
+ * interface using a RESTful web client to access business logic in a Java EE
+ * application server.
  *
  * It provides methods for purchasing a product, updating the amount of a
  * product bought, and retrieving a list of products bought by a customer. The
