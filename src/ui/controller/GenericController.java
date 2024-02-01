@@ -37,7 +37,7 @@ import javafx.scene.text.Text;
  * @author Dani
  * @author Alex Epelde
  */
-public class GenericController {
+public abstract class GenericController {
 
     protected static Image logo = new Image("resources/img/app_logo.png");
 

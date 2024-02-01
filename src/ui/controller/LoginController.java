@@ -24,8 +24,11 @@ import logic.encryption.EncriptionManagerFactory;
 import logic.exceptions.LogicException;
 import logic.factories.UserManagerFactory;
 import transfer.objects.User;
-import transfer.objects.UserType;
 
+/**
+ * Controller class for the login view. Handles all the actions of the login view
+ *
+ */
 public class LoginController extends GenericController {
 
     /**

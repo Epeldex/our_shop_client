@@ -18,7 +18,6 @@ import ui.controller.LocalDateStringConverter;
  * capabilities for LocalDate. It uses a DatePicker control for editing
  * LocalDate values.
  *
- * @param <Product> The type of data displayed in the TableView
  */
 public class ProductDatePickerTableCell extends TableCell<Product, LocalDate> {
 

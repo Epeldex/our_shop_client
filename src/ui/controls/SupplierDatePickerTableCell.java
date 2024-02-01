@@ -6,11 +6,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
-import transfer.objects.Product;
 import transfer.objects.Supplier;
 import ui.controller.LocalDateStringConverter;
 
@@ -20,7 +18,6 @@ import ui.controller.LocalDateStringConverter;
  * capabilities for LocalDate. It uses a DatePicker control for editing
  * LocalDate values.
  *
- * @param <Supplier> The type of data displayed in the TableView
  */
 public class SupplierDatePickerTableCell extends TableCell<Supplier, LocalDate> {
 

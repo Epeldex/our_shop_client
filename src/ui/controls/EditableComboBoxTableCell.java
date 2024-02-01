@@ -8,19 +8,24 @@ import javafx.util.StringConverter;
 import transfer.objects.Product;
 import transfer.objects.Supplier;
 
-// Custom cell class for the ComboBox
+/**
+ * A custom TableCell implementation for editing Supplier values in a ComboBox
+ * within a table. This cell is specifically designed for tables with Product
+ * objects, allowing the selection or editing of associated Suppliers.
+ */
 public class EditableComboBoxTableCell extends TableCell<Product, Supplier> {
 
     private final ComboBox<Supplier> comboBox = new ComboBox<>();
-
-    //static list because we will not be adding suppliers while this window is still open,
-    // so it is enough to do once in the init stage 
     private static ObservableList<Supplier> observableSupplierList;
-
     private static String oldValue = new String(" ");
 
+    /**
+     * Creates an EditableComboBoxTableCell with a list of suppliers.
+     *
+     * @param sList The list of Supplier objects to be displayed in the
+     * ComboBox.
+     */
     public EditableComboBoxTableCell(List<Supplier> sList) {
-
         observableSupplierList = FXCollections.observableArrayList(sList);
         comboBox.setEditable(true);
         comboBox.setConverter(new StringConverter<Supplier>() {
@@ -29,9 +34,6 @@ public class EditableComboBoxTableCell extends TableCell<Product, Supplier> {
                 return supplier == null ? "" : supplier.getName();
             }
 
-            // Essential method for this implementation to work, since the TableCell we are 
-            // replacing is of <Product, Supplier> type, we cant exchange it with String, so 
-            // we need to somehow get that string value for the ComboBox and get the selected item
             @Override
             public Supplier fromString(String string) {
                 for (Supplier s : observableSupplierList) {
@@ -39,25 +41,27 @@ public class EditableComboBoxTableCell extends TableCell<Product, Supplier> {
                         return s;
                     }
                 }
-                return new Supplier(); // return a Supplier instance because a null pointer creates a lot of problems
+                return new Supplier();
             }
-
         });
         comboBox.setOnAction(event -> commitEdit(comboBox.getValue()));
     }
 
+    /**
+     * Starts editing the cell, replacing text with the ComboBox.
+     */
     @Override
     public void startEdit() {
         super.startEdit();
         setText(null);
         setGraphic(comboBox);
-        oldValue = getItem().getName(); //save the old selection in case there is a selection cancel
-
-        // Populate the ComboBox with supplier names
+        oldValue = getItem().getName();
         comboBox.setItems(observableSupplierList);
-
     }
 
+    /**
+     * Cancels the editing and restores the cell to its original state.
+     */
     @Override
     public void cancelEdit() {
         super.cancelEdit();
@@ -65,6 +69,12 @@ public class EditableComboBoxTableCell extends TableCell<Product, Supplier> {
         updateItem(getItem(), isEmpty());
     }
 
+    /**
+     * Updates the item of the TableCell.
+     *
+     * @param item The Supplier item that is to be displayed in the cell.
+     * @param empty A boolean flag indicating whether the cell is empty.
+     */
     @Override
     public void updateItem(Supplier item, boolean empty) {
         super.updateItem(item, empty);
@@ -77,14 +87,9 @@ public class EditableComboBoxTableCell extends TableCell<Product, Supplier> {
                 setText(null);
                 setGraphic(comboBox);
             } else {
-                if (item.isEmpty()) {
-                    setText(oldValue); // if the supplier is empty (see fromString()), set the cell label value to the old one
-                } else {
-                    setText(item.getName()); // Display only the name of the supplier
-                }
+                setText(item != null && !item.isEmpty() ? item.getName() : oldValue);
                 setGraphic(null);
             }
         }
-
     }
 }
