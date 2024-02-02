@@ -1,5 +1,6 @@
 package ui.controller;
 
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +25,6 @@ import logic.encryption.EncriptionManagerFactory;
 import logic.exceptions.LogicException;
 import logic.factories.UserManagerFactory;
 import transfer.objects.User;
-import transfer.objects.UserType;
 
 public class LoginController extends GenericController {
 
@@ -110,7 +110,7 @@ public class LoginController extends GenericController {
         signUpButton.setOnAction(this::handleSignUp);
         loginButton.setOnAction(this::handleLogin);
 
-        // Button hovering animations
+        // Login button hovering animations
         {
             loginButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue) {
@@ -120,14 +120,14 @@ public class LoginController extends GenericController {
                 }
             });
         }
-
+        // This way the button cannot be focused
         showPasswordButton.setFocusTraversable(false);
         loginButton.setDefaultButton(true);
 
         // Close request reaction.
-        // TODO: + esc 
         stage.setOnCloseRequest(this::handleCloseRequest);
 
+        // Let's show the window
         stage.show();
 
         // Logger update.
@@ -138,11 +138,11 @@ public class LoginController extends GenericController {
     }
 
     /**
-     * case of changing the username field
+     * Launches when changing the username field
      *
      * @param observable in this case, username
-     * @param oldValue previous username in field
-     * @param newValue new username in field.
+     * @param oldValue previous value in field
+     * @param newValue new value in field.
      */
     protected void handleUsername(ObservableValue observable,
             String oldValue, String newValue) {
@@ -157,11 +157,15 @@ public class LoginController extends GenericController {
 
         } catch (EmptyFieldException | IncorrectFormatException e) {
             showErrorLabel(usernameErrorText, usernameErrorImage, e.getMessage());
+            if (e.getClass().equals(IncorrectFormatException.class))
+                LOGGER.warning("User attempts to login. "+e.getMessage());
+            else
+                LOGGER.warning("User attempts to login. " + e.getMessage());
         }
     }
 
     /**
-     * case of changing the password text field
+     * Launches when changing the password text field
      *
      * @param observable in this case, password
      * @param oldValue previous password in password field
@@ -171,11 +175,10 @@ public class LoginController extends GenericController {
             String oldValue,
             String newValue) {
 
-        if (newValue.equals(passwordTextField.getText())) {
+        if (newValue.equals(passwordTextField.getText())) 
             passwordField.setText(newValue);
-        } else {
+        else 
             passwordTextField.setText(newValue);
-        }
 
         try {
             if (triedToLogin) {
@@ -188,50 +191,68 @@ public class LoginController extends GenericController {
 
         } catch (IncorrectFormatException | EmptyFieldException e) {
             showErrorLabel(passwordErrorText, passwordErrorImage, e.getMessage());
+            if (e.getClass().equals(IncorrectFormatException.class))
+                LOGGER.warning("User attempts to login. " + e.getMessage());
         }
     }
 
     /**
-     * case of "show password" button being pressed
+     * Case of "show password" button being pressed.
      *
-     * @param event
+     * @param event event of pressing the button
      */
     private void handleShowPassword(ActionEvent event) {
+        String logMes = "";
         //Logger.getLogger(App.class.getName()).info("Show Password button pressed");
         if (!passwordTextField.isVisible()) {
             showPassword(passwordTextField, passwordField, showPasswordImage, true);
             passwordTextField.requestFocus();
+            logMes = "Show password button pressed. Password is now visible";
         } else {
             showPassword(passwordTextField, passwordField, showPasswordImage, false);
             passwordField.requestFocus();
+            logMes = "Show password button pressed. Password is now NOT visible";
         }
-
+        LOGGER.info(logMes);
     }
 
     /*
      * LAUNCHING OTHER WINDOWS
+     * 
+     * 
      */
     private void handleLogin(ActionEvent event) {
-        triedToLogin = true;
-        new RubberBand(loginButton).play();
-        if (usernameTextField.getText().equals("admin") && passwordField.getText().equals("abcd*1234")) {
+        triedToLogin = true; // useful
+        new RubberBand(loginButton).play();// button animation
+
+        String 
+            ADMIN_USERNAME = ResourceBundle.getBundle("config/parameters").getString("ADMIN_USERNAME"),
+            ADMIN_PASSWORD = ResourceBundle.getBundle("config/parameters").getString("ADMIN_PASSWORD");
+        
+
+        if (usernameTextField.getText().equals(ADMIN_USERNAME) 
+        && passwordField.getText().equals(ADMIN_PASSWORD))
             launchMainWindow();
-        } else {
+        else {
             handleUsername(null, null, usernameTextField.getText());
-            if (passwordField.isVisible()) {
+
+            if (passwordField.isVisible()) 
                 handlePassword(null, null, passwordField.getText());
-            } else {
+            else 
                 handlePassword(null, null, passwordTextField.getText());
-            }
-            try {
-                User user = UserManagerFactory.getInstance().signIn(new User(usernameTextField.getText(),
-                        EncriptionManagerFactory.getInstance().hashMessage(passwordField.getText())));
-                if (user.getUserType() != null) {
-                    launchMainWindow();
+            
+            if (!(passwordErrorText.isVisible() && usernameErrorText.isVisible())) {
+                try {
+                    User user = UserManagerFactory.getInstance().signIn(new User(usernameTextField.getText(),
+                            EncriptionManagerFactory.getInstance().hashMessage(passwordField.getText())));
+                    if (user.getUserType() != null) 
+                        launchMainWindow();
+                    
+                } catch (LogicException ex) {
+                    Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (LogicException ex) {
-                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
             shakeErrors(usernameErrorText, usernameErrorImage);
         }
     }
@@ -249,20 +270,20 @@ public class LoginController extends GenericController {
          * launching the next one.
          */
         fadeTransition(box, 1, 0)
-                .setOnFinished((ActionEvent) -> {
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/sign_up_view.fxml"));
-                        Parent root = (Parent) loader.load();
-                        // Obtain the Sign In window controller
-                        SignUpController controller = SignUpController.class
-                                .cast(loader.getController());
-                        controller.setStage(stage);
-                        controller.initStage(root);
-                    } catch (Exception ex) {
-                        Logger.getLogger(LoginController.class
-                                .getName()).log(Level.SEVERE, null, ex);
-                    }
-                });
+        .setOnFinished((ActionEvent) -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/sign_up_view.fxml"));
+                Parent root = (Parent) loader.load();
+                // Obtain the Sign In window controller
+                SignUpController controller = SignUpController.class
+                        .cast(loader.getController());
+                controller.setStage(stage);
+                controller.initStage(root);
+            } catch (Exception ex) {
+                Logger.getLogger(LoginController.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 
     /**

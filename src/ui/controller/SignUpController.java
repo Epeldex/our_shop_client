@@ -482,6 +482,7 @@ public class SignUpController extends GenericController {
             CustomerManagerFactory.getInstance().insertCustomer(customer);
         } catch (LogicException ex) {
             Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
 
     }
