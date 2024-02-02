@@ -1,17 +1,25 @@
+/**
+ * Controller class for Supplier Management in a JavaFX application.
+ * This class manages the UI components and interactions related to supplier management.
+ * Author: Alex Irusta
+ */
 package ui.controller;
 
+import app.App;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,148 +32,195 @@ import logic.interfaces.SupplierManager;
 import transfer.objects.Supplier;
 import ui.controls.SupplierDatePickerTableCell;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.util.Callback;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
-import javafx.util.converter.IntegerStringConverter;
-import transfer.objects.Product;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 import util.DataGenerator;
 
+/**
+ * Controller class for managing suppliers. Extends GenericController.
+ */
 public class SupplierManagementController extends GenericController {
 
+    // FXML elements
     @FXML
     ContextMenu contextMenu;
-
     @FXML
     MenuItem miAdd;
-
     @FXML
     MenuItem miEdit;
-
     @FXML
     MenuItem miDelete;
-
     @FXML
     private Button btnListSuppliers;
-
     @FXML
     private Button btnAdd;
-
     @FXML
     private Button btnEdit;
-
     @FXML
     private Button btnDelete;
-
     @FXML
     private Button btnExit;
-
     @FXML
     private TableView<Supplier> tvSupplier;
-
     @FXML
     private TableColumn<Supplier, String> nameColumnId;
-
     @FXML
     private TableColumn<Supplier, String> phoneColumnId;
-
     @FXML
     private TableColumn<Supplier, String> countryColumnId;
-
     @FXML
     private TableColumn<Supplier, Integer> zipColumnId;
-
     @FXML
     private TableColumn<Supplier, LocalDate> dateColumnId;
-
     @FXML
     private HBox menuBox;
 
+    // Data related to suppliers
     private ObservableList<Supplier> supplierList;
-
     private SupplierManager supplierManager;
 
+    /**
+     * Initializes the stage with UI components.
+     *
+     * @param root The root of the UI scene.
+     */
     public void initStage(Parent root) {
+        try {
+            // Set up the scene
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
 
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+            stage.setTitle("Supplier Management");
+            stage.setResizable(false);
 
-        supplierManager = SupplierManagerFactory.getInstance();
+            // Initialize supplier manager
+            supplierManager = SupplierManagerFactory.getInstance();
 
-        btnExit.setOnAction(event -> handleExitButtonAction());
+            // Set up button actions
+            btnExit.setOnAction(event -> handleExitButtonAction());
+            btnListSuppliers.setOnAction(event -> handleListButtonAction());
+            btnAdd.setOnAction(event -> handleAddButtonAction(event));
+            btnEdit.setOnAction(event -> handleEditButtonAction(event));
+            btnDelete.setOnAction(event -> handleDeleteButtonAction());
 
-        // Agrega manejadores para los botones
-        btnListSuppliers.setOnAction(event -> handleListButtonAction());
-        btnAdd.setOnAction(event -> handleAddButtonAction(event));
-        btnEdit.setOnAction(event -> handleEditButtonAction(event));
-        btnDelete.setOnAction(event -> handleDeleteButtonAction());
+            // Set initial visibility for the edit button
+            btnEdit.setVisible(false);
 
-        //btnEdit.setVisible(false);
-        // Agrega un manejador para el evento de cierre de la ventana
-        stage.setOnCloseRequest(event -> handleCloseRequest(event, stage));
+            // Set up close request event
+            stage.setOnCloseRequest(event -> handleCloseRequest(event, stage));
 
-        // Agrega un listener para activar/desactivar los botones y el menú de contexto
-        tvSupplier.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                btnEdit.setDisable(false);
-                btnDelete.setDisable(false);
-            } else {
-                btnEdit.setDisable(true);
-                btnDelete.setDisable(true);
-            }
-        });
+            // Enable/disable buttons based on selection in the TableView
+            tvSupplier.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    btnEdit.setDisable(false);
+                    btnDelete.setDisable(false);
+                } else {
+                    btnEdit.setDisable(true);
+                    btnDelete.setDisable(true);
+                }
+            });
 
-        miAdd.setOnAction(event -> handleAddButtonAction(event));
-        miEdit.setOnAction(event -> handleEditButtonAction(event));
-        miDelete.setOnAction(event -> handleDeleteButtonAction());
+            // Set up context menu actions
+            miAdd.setOnAction(event -> handleAddButtonAction(event));
+            miEdit.setOnAction(event -> handleEditButtonAction(event));
+            miDelete.setOnAction(event -> handleDeleteButtonAction());
 
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(0)).getItems().get(0).setOnAction(super::handleLogOutAction);
+            // Set up menu action
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0)).getMenus().get(0))
+                    .getItems().get(0).setOnAction(super::handleLogOutAction);
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(1)).getItems().get(0).setOnAction(this::showAboutDialog);
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
+                    .getMenus().get(2)).getItems().get(0).setOnAction(this::handlePrintReportAction);
 
-        nameColumnId.setCellValueFactory(new PropertyValueFactory<>("name"));
-        phoneColumnId.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        countryColumnId.setCellValueFactory(new PropertyValueFactory<>("country"));
-        zipColumnId.setCellValueFactory(new PropertyValueFactory<>("zip"));
-        dateColumnId.setCellValueFactory(factory -> {
-            return getDateToLocalDateValueFactory(factory);
-        });
+            // Set up TableView columns
+            nameColumnId.setCellValueFactory(new PropertyValueFactory<>("name"));
+            phoneColumnId.setCellValueFactory(new PropertyValueFactory<>("phone"));
+            countryColumnId.setCellValueFactory(new PropertyValueFactory<>("country"));
+            zipColumnId.setCellValueFactory(new PropertyValueFactory<>("zip"));
+            dateColumnId.setCellValueFactory(factory -> getDateToLocalDateValueFactory(factory));
 
-        // Ajusta el nombre de la columna según tus necesidades
-        nameColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
-        dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
-        countryColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
-        dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
+            // Set cell factories for editable columns
+            nameColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
+            dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
+            countryColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
+            dateColumnId.setCellFactory(getSupplierDatePickerCellFactory());
+            phoneColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
+            zipColumnId.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 
-        phoneColumnId.setCellFactory(TextFieldTableCell.forTableColumn());
-        phoneColumnId.setOnEditCommit(this::handlePhoneCellEdition);
+            zipColumnId.setOnEditCommit(this::handleZipCellEdition);
+            nameColumnId.setOnEditCommit(this::handleNameCellEdition);
+            countryColumnId.setOnEditCommit(this::handleCountryCellEdition);
+            dateColumnId.setOnEditCommit(this::handleAdditionDateCellEdition);
+            phoneColumnId.setOnEditCommit(this::handlePhoneCellEdition);
 
-        zipColumnId.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        zipColumnId.setOnEditCommit(this::handleZipCellEdition);
+            // Set up initial menu item for product management
+            MenuItem mitProductManagement = new MenuItem();
+            mitProductManagement.setText("Product Management");
+            mitProductManagement.setMnemonicParsing(false);
+            Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0)).getMenus().get(0)).getItems().add(mitProductManagement);
+            mitProductManagement.setOnAction(event -> handleProductMenuItemAction(event));
 
-        nameColumnId.setOnEditCommit(this::handleNameCellEdition);
-        countryColumnId.setOnEditCommit(this::handleCountryCellEdition);
-        dateColumnId.setOnEditCommit(this::handleAdditionDateCellEdition);
+            // Add a listener to handle selected item changes
+            tvSupplier.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
 
-        MenuItem mitProductManagement = new MenuItem();
-        mitProductManagement.setText("Product Management");
-        mitProductManagement.setMnemonicParsing(false);
-        Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0))
-                .getMenus().get(0)).getItems().add(mitProductManagement);
-
-        // Añadir la columna a la tabla
-        // (asumiendo que tu tabla ya está creada y tiene un modelo de datos asociado)
-        tvSupplier.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
-
-        supplierList = FXCollections.observableArrayList();
-        stage.centerOnScreen();
-
-        stage.show();
+            // Initialize supplier list and show the stage
+            supplierList = FXCollections.observableArrayList();
+            stage.centerOnScreen();
+            stage.show();
+        } catch (Exception e) {
+            showErrorAlert("ERROR", "An error occurred while initializing the Supplier Managament window", e.getMessage());
+        }
     }
 
+    /**
+     * Launches the product window by loading the associated FXML file and
+     * initializing the corresponding controller.
+     */
+    private void launchProductWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/views/product_view.fxml"));
+            Parent root = (Parent) loader.load();
+            ProductViewController.class.cast(loader.getController()).setStage(stage);
+            ProductViewController.class.cast(loader.getController()).initStage(root);
+        } catch (Exception ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Handles the action when the product menu item is selected. It prompts the
+     * user with a confirmation dialog and opens the product window if the user
+     * chooses to proceed.
+     *
+     * @param event The ActionEvent triggered by selecting the product menu
+     * item.
+     */
+    private void handleProductMenuItemAction(ActionEvent event) {
+        if (showConfirmationDialog("Do you want to open the Supplier Management window?")) {
+            launchProductWindow();
+        }
+    }
+
+    /**
+     * Handles the selection of an item in the TableView. It enables or disables
+     * various buttons and menu items based on whether an item is selected or
+     * not.
+     *
+     * @param event The Observable representing the selection event.
+     */
     private void handleSelectedItem(Observable event) {
         if (event != null) {
             // Enable edit and delete buttons and menu items
@@ -182,6 +237,10 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the action when the "List Suppliers" button is pressed. Retrieves
+     * the list of suppliers and updates the TableView.
+     */
     private void handleListButtonAction() {
         try {
             supplierList.clear();
@@ -192,6 +251,14 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the action when the "Add" button is pressed. Logs the button
+     * press, generates a new random supplier, inserts it into the database, and
+     * updates the TableView with the latest supplier list. Displays an error
+     * alert if an exception occurs during the process.
+     *
+     * @param event The ActionEvent triggered by pressing the "Add" button.
+     */
     @FXML
     private void handleAddButtonAction(ActionEvent event) {
         try {
@@ -215,6 +282,14 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the action when the "Edit" button is pressed. Logs the button
+     * press, gets the selected cell in the TableView, and enters edit mode for
+     * the selected cell. Displays an error alert if an exception occurs during
+     * the process.
+     *
+     * @param event The ActionEvent triggered by pressing the "Edit" button.
+     */
     @FXML
     private void handleEditButtonAction(ActionEvent event) {
         try {
@@ -230,14 +305,22 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the action when the "Delete" button is pressed. Deletes the
+     * selected supplier from the database and removes it from the TableView.
+     * Displays an error alert if an exception occurs during the process or if
+     * no supplier is selected.
+     */
     private void handleDeleteButtonAction() {
         try {
             Supplier selectedSupplier = tvSupplier.getSelectionModel().getSelectedItem();
             if (selectedSupplier != null) {
-                SupplierManager supplierManager = SupplierManagerFactory.getInstance();
-                supplierManager.deleteSupplier(selectedSupplier.getSupplier_id());
+                if (showConfirmationDialog("Are you sure you want to delete " + selectedSupplier.toString())) {
+                    SupplierManager supplierManager = SupplierManagerFactory.getInstance();
+                    supplierManager.deleteSupplier(selectedSupplier.getSupplier_id());
 
-                tvSupplier.getItems().remove(selectedSupplier);
+                    tvSupplier.getItems().remove(selectedSupplier);
+                }
             } else {
                 showErrorAlert("Error Deleting Supplier", "Please select a supplier to delete.", null);
             }
@@ -247,6 +330,16 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the close request for the application. Displays a confirmation
+     * dialog asking the user if they are sure they want to close the
+     * application. If the user confirms (presses OK), the application is
+     * exited; otherwise, the close event is consumed, preventing the
+     * application from closing.
+     *
+     * @param event The WindowEvent representing the close request.
+     * @param stage The main Stage of the application.
+     */
     private void handleCloseRequest(javafx.stage.WindowEvent event, Stage stage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Close");
@@ -261,6 +354,12 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the cell edit event for the "Name" column in the TableView. Edits
+     * the name information of the selected supplier and updates the database.
+     *
+     * @param event The CellEditEvent object for the event.
+     */
     @FXML
     private void handleNameCellEdition(CellEditEvent<Supplier, String> event) {
         try {
@@ -291,6 +390,13 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the cell edit event for the "Country" column in the TableView.
+     * Edits the country information of the selected supplier and updates the
+     * database.
+     *
+     * @param event The CellEditEvent object for the event.
+     */
     @FXML
     private void handleCountryCellEdition(CellEditEvent<Supplier, String> event) {
         try {
@@ -321,26 +427,27 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
-    private void showAboutDialog() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
-        alert.setHeaderText(null);
-        alert.setContentText("Supplier Management App\nVersion 1.0\nDeveloped by Your Company");
+    /**
+     * Displays an "About" dialog providing information about the Supplier
+     * Management App, including the version and the development details.
+     */
+    private void showAboutDialog(ActionEvent event) {
+        Alert aboutAlert = new Alert(AlertType.INFORMATION);
+        aboutAlert.setTitle("About");
+        aboutAlert.setHeaderText("Supplier Management System");
+        aboutAlert.setContentText("This application is designed for managing suppliers efficiently.\nVersion: 1.0.0\nAuthor: Alex Irusta");
 
-        alert.showAndWait();
+        aboutAlert.showAndWait();
     }
 
-    private void showUserManual() {
-        // TODO: Lógica para abrir la ventana con el manual de usuario
-        // Puedes abrir una nueva ventana o mostrar el manual en una ventana existente.
-        // Aquí puedes utilizar FXML y otro controlador para la ventana del manual.
-    }
-
-    private void generateReport() {
-        // TODO: Lógica para generar e imprimir el reporte
-    }
-
-    // Método para validar el campo "Name"
+    /**
+     * Validates the specified "Name" field, throwing a ValidationException if
+     * it is empty or exceeds the maximum allowed length (255 characters).
+     *
+     * @param name The name to be validated.
+     * @throws ValidationException If the name is empty or exceeds 255
+     * characters.
+     */
     private void validateName(String name) throws ValidationException {
         if (name == null || name.trim().isEmpty()) {
             throw new ValidationException("Name cannot be empty.");
@@ -351,7 +458,14 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
-    // Método para validar el campo "Country"
+    /**
+     * Validates the specified "Country" field, throwing a ValidationException
+     * if it is empty or exceeds the maximum allowed length (255 characters).
+     *
+     * @param country The country to be validated.
+     * @throws ValidationException If the country is empty or exceeds 255
+     * characters.
+     */
     private void validateCountry(String country) throws ValidationException {
         if (country == null || country.trim().isEmpty()) {
             throw new ValidationException("Country cannot be empty.");
@@ -362,7 +476,10 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
-    // Clase de excepción personalizada para la validación
+    /**
+     * Custom exception class for validation errors. Represents exceptional
+     * cases where validation constraints are not met.
+     */
     class ValidationException extends Exception {
 
         public ValidationException(String message) {
@@ -370,43 +487,69 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the cell edit event for the "Zip" column in the TableView. Edits
+     * the zip information of the selected supplier and updates the database.
+     *
+     * @param event The CellEditEvent object for the event.
+     */
     @FXML
     private void handleZipCellEdition(CellEditEvent<Supplier, Integer> event) {
         try {
             Integer newValue = event.getNewValue();
 
-            // Validar el nuevo valor según el formato requerido
+            if (newValue == null) {
+                throw new Exception("The value must be numeric");
+            }
+
+            // Validate the new value according to the required format
             validateZip(newValue);
 
-            // Obtener la instancia de Supplier asociada a la celda
+            // Get the Supplier instance associated with the cell
             Supplier supplier = event.getRowValue();
 
-            // Actualizar el valor de la propiedad en el objeto Supplier
+            // Update the value of the property in the Supplier object
             supplier.setZip(newValue);
 
-            // Llamar al método lógico para actualizar el Supplier en la base de datos
+            // Call the logical method to update the Supplier in the database
             supplierManager.updateSupplier(supplier);
 
-            // Refrescar la tabla para que muestre el nuevo valor
-            tvSupplier.refresh();
+            // Refresh the table to display the new value
         } catch (Exception e) {
-            // Si hay un error de validación, mostrar una alerta y no aceptar el cambio
+            // If there is a validation error, show an alert and do not accept the change
             showErrorAlert("Error", "Invalid ZIP format", e.getMessage());
             event.consume();
+        } finally {
+            tvSupplier.refresh();
         }
     }
 
-// Método para validar el campo "ZIP"
+    /**
+     * Validates the specified "ZIP" field, throwing a ValidationException if it
+     * is not a numeric value with exactly 5 digits.
+     *
+     * @param zip The ZIP code to be validated.
+     * @throws ValidationException If the ZIP code is not a numeric value with 5
+     * digits.
+     */
     private void validateZip(Integer zip) throws ValidationException {
         if (zip == null || zip.toString().length() != 5) {
             throw new ValidationException("ZIP must be a numeric value with 5 digits.");
         }
+
     }
 
+    /**
+     * Validates the specified date, ensuring it adheres to the desired format.
+     * Customizable based on specific date format requirements.
+     *
+     * @param date The date to be validated.
+     * @throws ValidationException If the date format is invalid.
+     */
     private void validateDate(LocalDate date) throws ValidationException {
-        // Puedes personalizar la validación del formato de la fecha según tus necesidades
+        // You can customize the validation of the date format based on your needs
         if (date != null) {
-            // Verifica si la fecha tiene el formato deseado
+            // Check if the date has the desired format
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             String formattedDate = dateFormatter.format(date);
 
@@ -416,6 +559,12 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the action when the exit button is pressed. Displays a
+     * confirmation dialog to confirm the user's intention to exit the
+     * application. If the user confirms (presses OK), the application is
+     * exited.
+     */
     private void handleExitButtonAction() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Exit");
@@ -428,6 +577,13 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the cell edit event for the "Addition Date" column in the
+     * TableView. Edits the addition date information of the selected supplier
+     * and updates the database.
+     *
+     * @param event The CellEditEvent object for the event.
+     */
     @FXML
     private void handleAdditionDateCellEdition(CellEditEvent<Supplier, LocalDate> event) {
         try {
@@ -449,40 +605,88 @@ public class SupplierManagementController extends GenericController {
         }
     }
 
+    /**
+     * Handles the cell edit event for the "Phone" column in the TableView.
+     * Edits the phone information of the selected supplier and updates the
+     * database.
+     *
+     * @param event The CellEditEvent object for the event.
+     */
     @FXML
     private void handlePhoneCellEdition(CellEditEvent<Supplier, String> event) {
         try {
             String newValue = event.getNewValue();
 
+            // Validate the new phone value
             validatePhone(newValue);
 
             Supplier supplier = event.getRowValue();
 
+            // Update the phone value in the Supplier object
             supplier.setPhone(newValue);
 
+            // Update the Supplier in the database
             supplierManager.updateSupplier(supplier);
 
-            tvSupplier.refresh();
         } catch (Exception e) {
+            // If there is a validation error, show an alert and do not accept the change
             showErrorAlert("Error", "Invalid phone format", e.getMessage());
             event.consume();
+        } finally {
+            tvSupplier.refresh();
         }
     }
 
-    // Método para validar el campo "Phone"
+    /**
+     * Validates the specified "Phone" field, throwing a ValidationException if
+     * it is empty, contains only whitespace, or does not match the required
+     * format (must start with '+' followed by 11 numbers).
+     *
+     * @param phone The phone number to be validated.
+     * @throws ValidationException If the phone number is invalid.
+     */
+// Método para validar el campo "Phone"
     private void validatePhone(String phone) throws ValidationException {
         if (phone == null || phone.trim().isEmpty() || !phone.matches("\\+\\d{11}")) {
             throw new ValidationException("Phone must start with '+' followed by 11 numbers.");
         }
     }
 
+    /**
+     * Retrieves a Callback for creating DatePicker cells within a TableColumn
+     * for the "Creation Date" column. Used for specifying the appearance and
+     * behavior of cells in this column.
+     *
+     * @return A Callback for creating DatePicker cells.
+     */
     private Callback<TableColumn<Supplier, LocalDate>, TableCell<Supplier, LocalDate>> getSupplierDatePickerCellFactory() {
         return (TableColumn<Supplier, LocalDate> param) -> new SupplierDatePickerTableCell();
     }
 
+    /**
+     * Retrieves an ObservableValue for the "Creation Date" column's cell data.
+     * Converts the creation timestamp from the Supplier into a LocalDate value
+     * for display in the TableView.
+     *
+     * @param factory The CellDataFeatures containing information about the
+     * cell.
+     * @return An ObservableValue representing the LocalDate value for the cell.
+     */
     private ObservableValue<LocalDate> getDateToLocalDateValueFactory(TableColumn.CellDataFeatures<Supplier, LocalDate> factory) {
         return new SimpleObjectProperty<LocalDate>(factory.getValue().getCreateTimestamp()
                 .toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    }
 
+    private void handlePrintReportAction(ActionEvent event) {
+        try {
+            JasperReport report = JasperCompileManager.compileReport(getClass().getClassLoader().getResourceAsStream("ui/report/SupplierReport.jrxml"));
+            JRBeanCollectionDataSource items = new JRBeanCollectionDataSource((Collection<Supplier>) tvSupplier.getItems());
+            Map<String, Object> parameters = new HashMap<>();
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, items);
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setVisible(true);
+        } catch (JRException ex) {
+            Logger.getLogger(ProductViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

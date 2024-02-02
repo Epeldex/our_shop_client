@@ -26,6 +26,11 @@ import logic.exceptions.LogicException;
 import logic.factories.UserManagerFactory;
 import transfer.objects.User;
 
+/**
+ * Controller class for the login view. Handles all the actions of the login
+ * view
+ *
+ */
 public class LoginController extends GenericController {
 
     /**
@@ -109,18 +114,15 @@ public class LoginController extends GenericController {
         forgotPasswordButton.setOnAction(this::handleRecoverPassword);
         signUpButton.setOnAction(this::handleSignUp);
         loginButton.setOnAction(this::handleLogin);
-
-        // Login button hovering animations
-        {
-            loginButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    new Expand(loginButton).play();
-                } else {
-                    new Contract(loginButton).play();
-                }
-            });
-        }
-        // This way the button cannot be focused
+        // Button hovering animations
+        loginButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                new Expand(loginButton).play();
+            } else {
+                new Contract(loginButton).play();
+            }
+        });
+      
         showPasswordButton.setFocusTraversable(false);
         loginButton.setDefaultButton(true);
 

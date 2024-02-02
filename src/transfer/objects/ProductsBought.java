@@ -10,24 +10,24 @@ import javax.xml.bind.annotation.XmlTransient;
  * The ProductsBought class represents information about products that were
  * bought, including the amount purchased and the timestamp of the purchase.
  *
- * @author alexIrusta
+ * @author Alex Irusta
  */
-
 @XmlRootElement
 public class ProductsBought implements Serializable {
 
     // The amount of products bought
     private Integer amount;
 
+    // The composite identifier for ProductsBought
     private ProductsBoughtId id;
 
     // The timestamp indicating when the products were bought
     private Date boughtTimestamp;
 
-
+    // The associated customer for the product purchase
     private Customer customer;
 
-
+    // The associated product being purchased
     private Product product;
 
     /**
@@ -66,28 +66,57 @@ public class ProductsBought implements Serializable {
         this.boughtTimestamp = boughtTimestamp;
     }
 
+    /**
+     * Gets the composite identifier for ProductsBought.
+     *
+     * @return The composite identifier for ProductsBought.
+     */
     public ProductsBoughtId getId() {
         return id;
     }
 
+    /**
+     * Sets the composite identifier for ProductsBought.
+     *
+     * @param id The new composite identifier for ProductsBought.
+     */
     public void setId(ProductsBoughtId id) {
         this.id = id;
     }
 
+    /**
+     * Gets the associated customer for the product purchase.
+     *
+     * @return The associated customer for the product purchase.
+     */
     @XmlTransient
     public Customer getCustomer() {
         return customer;
     }
 
+    /**
+     * Sets the associated customer for the product purchase.
+     *
+     * @param customer The new associated customer for the product purchase.
+     */
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
-
+    /**
+     * Gets the associated product being purchased.
+     *
+     * @return The associated product being purchased.
+     */
     public Product getProduct() {
         return product;
     }
 
+    /**
+     * Sets the associated product being purchased.
+     *
+     * @param product The new associated product being purchased.
+     */
     public void setProduct(Product product) {
         this.product = product;
     }

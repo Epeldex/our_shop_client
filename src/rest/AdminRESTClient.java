@@ -8,15 +8,6 @@ import javax.ws.rs.core.MediaType;
 import transfer.objects.Admin;
 
 /**
- * Jersey REST client generated for REST resource:AdminREST [admins]<br>
- * USAGE:
- * <pre>
- *        AdminRESTClient client = new AdminRESTClient();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
- * </pre>
- *
  * This class provides methods to interact with a RESTful web service that
  * manages admin entities.
  *

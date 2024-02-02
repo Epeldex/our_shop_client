@@ -3,10 +3,11 @@ package ui.controller;
 import animatefx.animation.Jello;
 import animatefx.animation.partial.Contract;
 import animatefx.animation.partial.Expand;
+import app.App;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Base64;
-
 import javax.ws.rs.core.GenericType;
-
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,6 +26,17 @@ import logic.exceptions.IncorrectFormatException;
 import rest.CustomerRESTClient;
 import transfer.objects.Customer;
 
+
+
+/**
+ * Controller for the Password Recovery window.
+ *
+ * This class handles user interactions and controls the behavior of the
+ * Password Recovery window, including sending recovery emails and transitioning
+ * to the Login window.
+ *
+ * @author Alex Epelde
+ */
 public class PasswordRecoveryController extends GenericController {
 
     /**
@@ -58,10 +70,9 @@ public class PasswordRecoveryController extends GenericController {
     boolean triedToRecover;
 
     /**
-     * method that initiates the stage and sets/prepares the values inside of
-     * it.
+     * Initializes the stage and sets/prepares the values inside of it.
      *
-     * @param root
+     * @param root The root node of the scene.
      */
     public void initStage(Parent root) {
         box.setVisible(false);
@@ -132,10 +143,10 @@ public class PasswordRecoveryController extends GenericController {
             }
         }
     }
-
     /**
-     * Method that manages the 
-     * @param event
+     * Handles the password recovery action.
+     *
+     * @param event The ActionEvent triggered by the recovery button.
      */
     private void handleRecovery(ActionEvent event) {
         triedToRecover = true;
@@ -164,12 +175,15 @@ public class PasswordRecoveryController extends GenericController {
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
         }
-
         if (customer == null)
             showErrorAlert("There's no user with this email adress.");
-
     }
 
+    /**
+     * Handles the login action.
+     *
+     * @param event The ActionEvent triggered by the login button.
+     */
     public void handleLogin(ActionEvent event) {
         new Jello(loginButton).play();
         box.requestFocus();
@@ -190,10 +204,10 @@ public class PasswordRecoveryController extends GenericController {
                         controller.initStage(root);
 
                     } catch (Exception ex) {
-                        /*
-                         * Logger.getLogger(App.class
-                         * .getName()).log(Level.SEVERE, null, ex);
-                         */
+
+                        Logger.getLogger(App.class
+                                .getName()).log(Level.SEVERE, null, ex);
+
                     }
                 });
     }

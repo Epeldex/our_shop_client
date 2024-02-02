@@ -163,12 +163,21 @@ public class Customer extends User {
         this.balance = balance;
     }
 
+    /**
+     * Gets the set of products bought by the customer.
+     *
+     * @return The set of products bought by the customer.
+     */
     public Set<ProductsBought> getProductsBought() {
         return productsBought;
     }
 
+    /**
+     * Sets the set of products bought by the customer.
+     *
+     * @param productsBought The new set of products bought by the customer.
+     */
     public void setProductsBought(Set<ProductsBought> productsBought) {
         this.productsBought = productsBought;
     }
-
 }

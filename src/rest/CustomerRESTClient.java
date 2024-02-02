@@ -12,12 +12,6 @@ import transfer.objects.Customer;
 /**
  * Jersey REST client generated for REST resource: CustomerREST [customers]<br>
  * USAGE:
- * <pre>
- *        CustomerRESTClient client = new CustomerRESTClient();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
- * </pre>
  *
  * This class provides a Jersey REST client for interacting with a RESTful web
  * service that deals with customer entities. It extends GenericRESTClient,

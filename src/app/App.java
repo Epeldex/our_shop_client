@@ -10,6 +10,9 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ui.controller.LoginController;
 
+/**
+ * Entry point of the app, main JavaFX class
+ */
 public class App extends Application {
 
     /**
