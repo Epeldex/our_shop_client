@@ -16,9 +16,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import logic.business.EmailManager;
 import logic.encryption.EncriptionManagerFactory;
+import logic.exceptions.EmptyFieldException;
+import logic.exceptions.IncorrectFormatException;
 import rest.CustomerRESTClient;
 import transfer.objects.Customer;
 
@@ -35,14 +39,35 @@ import transfer.objects.Customer;
  */
 public class PasswordRecoveryController extends GenericController {
 
+    /**
+     * Text fields where user will input the their email.
+     */
     @FXML
     private TextField emailTextField;
-
+    /**
+     * Red image of email format error.
+     */
+    @FXML
+    private ImageView emailErrorImage;
+    /**
+     * Text displaying email format error info.
+     */
+    @FXML
+    private Text emailErrorText;
+    /**
+     * Buttons of the window: recovery, and back to login.
+     */
     @FXML
     private Button recoveryButton, loginButton;
-
+    /**
+     * Box containing everything
+     */
     @FXML
     private AnchorPane box;
+    /**
+     * Useful when checking email.
+     */
+    boolean triedToRecover;
 
     /**
      * Initializes the stage and sets/prepares the values inside of it.
@@ -59,10 +84,14 @@ public class PasswordRecoveryController extends GenericController {
         stage.getIcons().add(logo);
         stage.setTitle("Recovery Window");
 
+        // Setting every node enabled.
         emailTextField.setDisable(false);
         recoveryButton.setDisable(false);
         loginButton.setDisable(false);
 
+        // Hiding error messages
+        emailErrorImage.setVisible(false);
+        emailErrorText.setVisible(false);
         // Setting listener
         emailTextField.textProperty().addListener(this::handleEmail);
 
@@ -71,35 +100,48 @@ public class PasswordRecoveryController extends GenericController {
         loginButton.setOnAction(this::handleLogin);
 
         // Button hovering animations
-        {
-            recoveryButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    new Expand(recoveryButton).play();
-                } else {
-                    new Contract(recoveryButton).play();
-                }
-            });
-        }
 
+        recoveryButton.hoverProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue)
+                new Expand(recoveryButton).play();
+            else
+                new Contract(recoveryButton).play();
+
+        });
+
+        //
         stage.setScene(scene);
-
+        // Let's show the window.
         stage.show();
         // Logger update.
         LOGGER.info("Window opened.");
 
+        // Entrance animation
         slideBoxIn(box, 1);
     }
 
     /**
-     * Handles changes in the email text field.
-     *
-     * @param observable The property being observed.
-     * @param oldValue The previous value of the property.
-     * @param newValue The new value of the property.
+     * Method that checks the email format and shows (or hides)
+     * the error message.
+     * 
+     * @param observable
+     * @param oldValue
+     * @param newValue current value in email field
      */
     public void handleEmail(ObservableValue observable,
             String oldValue, String newValue) {
 
+        if (triedToRecover) {
+            try {
+                validateEmail(newValue);
+
+                // If there are no errors, hide labels
+                emailErrorText.setVisible(false);
+                emailErrorImage.setVisible(false);
+            } catch (IncorrectFormatException | EmptyFieldException e) {
+                showErrorLabel(emailErrorText, emailErrorImage, e.getMessage());
+            }
+        }
     }
     /**
      * Handles the password recovery action.
@@ -107,19 +149,34 @@ public class PasswordRecoveryController extends GenericController {
      * @param event The ActionEvent triggered by the recovery button.
      */
     private void handleRecovery(ActionEvent event) {
+        triedToRecover = true;
+        handleEmail(null, null, emailTextField.getText());
+        Customer customer = null;
         try {
             if (validateEmail(emailTextField.getText())) {
-                Customer customer = new CustomerRESTClient().resetPassword(
+                customer = new CustomerRESTClient().resetPassword(
                         new GenericType<Customer>() {
-                }, emailTextField.getText());
-                EmailManager em = new EmailManager(customer.getEmail(),
-                        Base64.getEncoder().encodeToString(
-                                EncriptionManagerFactory.getInstance().decryptMessage(customer.getPassword())));
-                em.start();
+                        }, emailTextField.getText());
+
+                if (customer == null)
+                    showErrorAlert("There's no user with this email adress.");
+
+                else {
+                    EmailManager em = new EmailManager(
+                            customer.getEmail(),
+                            Base64.getEncoder().encodeToString(
+                                    EncriptionManagerFactory
+                                            .getInstance().decryptMessage(customer.getPassword())));
+                    em.start();
+                }
+
             }
+        } catch (IncorrectFormatException | EmptyFieldException e) {
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warning(e.getMessage());
         }
+        if (customer == null)
+            showErrorAlert("There's no user with this email adress.");
     }
 
     /**
