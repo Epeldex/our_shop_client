@@ -173,8 +173,42 @@ public class SupplierManagementController extends GenericController {
             Menu.class.cast(MenuBar.class.cast(menuBox.getChildren().get(0)).getMenus().get(0)).getItems().add(mitProductManagement);
             mitProductManagement.setOnAction(event -> handleProductMenuItemAction(event));
 
-            // Add a listener to handle selected item changes
+
             tvSupplier.getSelectionModel().selectedItemProperty().addListener(event -> handleSelectedItem(event));
+
+            phoneColumnId.setCellFactory(column -> {
+                return new TableCell<Supplier, String>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item == null || empty) {
+                            setText(null);
+                            setStyle("");
+                        } else {
+                            setText(item);
+                            setStyle("-fx-alignment: CENTER-RIGHT;");
+                        }
+                    }
+                };
+            });
+
+            zipColumnId.setCellFactory(column -> {
+                return new TableCell<Supplier, Integer>() {
+                    @Override
+                    protected void updateItem(Integer item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item == null || empty) {
+                            setText(null);
+                            setStyle("");
+                        } else {
+                            setText(item.toString());
+                            setStyle("-fx-alignment: CENTER-RIGHT;");
+                        }
+                    }
+                };
+            });
 
             // Initialize supplier list and show the stage
             supplierList = FXCollections.observableArrayList();
