@@ -43,10 +43,10 @@
                 <TableView fx:id="tvSupplier" editable="true" layoutX="114.0" layoutY="180.0" prefHeight="425.0" prefWidth="971.0">
                     <columns>
                         <TableColumn fx:id="nameColumnId" prefWidth="184.0000762939453" text="Name" />
-                        <TableColumn fx:id="phoneColumnId" prefWidth="192.79998779296875" text="Phone" />
                         <TableColumn fx:id="countryColumnId" prefWidth="200.79998779296875" text="Country" />
-                        <TableColumn fx:id="zipColumnId" prefWidth="177.5999755859375" text="ZIP" />
                   <TableColumn fx:id="dateColumnId" prefWidth="215.9999877929688" text="Addition Date" />
+                        <TableColumn fx:id="phoneColumnId" prefWidth="192.79998779296875" text="Phone" />
+                        <TableColumn fx:id="zipColumnId" prefWidth="177.5999755859375" text="ZIP" />
                     </columns>
                     <contextMenu>
                         <ContextMenu>

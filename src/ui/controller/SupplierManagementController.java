@@ -178,6 +178,11 @@ public class SupplierManagementController extends GenericController {
 
             // Initialize supplier list and show the stage
             supplierList = FXCollections.observableArrayList();
+
+            supplierList.clear();
+            supplierList = FXCollections.observableArrayList(supplierManager.selectAllSuppliers());
+            tvSupplier.setItems(supplierList);
+
             stage.centerOnScreen();
             stage.show();
         } catch (Exception e) {
@@ -226,7 +231,8 @@ public class SupplierManagementController extends GenericController {
             // Enable edit and delete buttons and menu items
             btnEdit.setDisable(false);
             btnDelete.setDisable(false);
-            miEdit.setDisable(false);
+            //miEdit.setDisable(false);
+            miEdit.setVisible(false);
             miDelete.setDisable(false);
         } else {
             // Disable edit and delete buttons and menu items
@@ -403,8 +409,8 @@ public class SupplierManagementController extends GenericController {
             String newValue = event.getNewValue();
 
             // Check conditions
-            if (newValue == null || newValue.trim().isEmpty() || newValue.length() > 255) {
-                throw new Exception("The cell is empty or exceeds 255 characters.");
+            if (newValue == null || newValue.trim().isEmpty() || newValue.matches(".*\\d.*")) {
+                throw new ValidationException("Country cannot be empty and cannot contain numbers.");
             }
 
             // Update the product's other information and call the logic method to update the product
